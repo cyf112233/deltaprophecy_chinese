@@ -26,11 +26,6 @@
       color: white;
       background: black;
     }
-    
-    @keyframes pageBgScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: -316px 238px; } /* move left by width, down by height */
-    }
 
     #textContainer {
       width: 75vw;
@@ -59,6 +54,7 @@
       position: relative;
       width: 75vw;
       max-width: 512px;
+      height: 256px;
       aspect-ratio: 1 / 1;
     }
 
@@ -106,7 +102,6 @@
     h1 {
       margin-top: 15px;
       margin-bottom: 5px;
-      font-weight: normal;
     }
     
     footer {
@@ -177,6 +172,15 @@
       box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
     
+    #directions {
+      max-width: 512px;
+      text-align: center;
+      color: #ccc;
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
   </style>
 </head>
 <body>
@@ -193,10 +197,12 @@
   </div>
   <div id="textContainer">Your prophecy here</div>
   <div id="output">
-    <canvas id="ghostIcon" width="512" height="512"></canvas>
-    <canvas id="panel" width="512" height="512"></canvas>
+    <canvas id="ghostIcon" width="512" height="256"></canvas>
+    <canvas id="panel" width="512" height="256"></canvas>
   </div>
-  
+  <div id="directions">
+  <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use /n to move to a new line.</p>
+  </div>
   <footer>
     <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
   </footer>
@@ -370,7 +376,8 @@
     });
 
     textInput.addEventListener('input', () => {
-      textContainer.textContent = textInput.value || 'Your prophecy here';
+      const formattedText = (textInput.value || 'Your prophecy here').replace(/\/n/g, '<br>');
+      textContainer.innerHTML = formattedText;
     });
 
     // Redraw when checkbox state changes
