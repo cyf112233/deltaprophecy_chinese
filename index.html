@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prophecy Panel Generator</title>
+  <title>DeltaProphecy</title>
   <style>
     @font-face {
       font-family: 'ProphecyType';
@@ -184,7 +184,7 @@
   </style>
 </head>
 <body>
-  <h1>Prophecy Panel Generator</h1>
+  <h1>Deltarune Prophecy Panel Generator</h1>
   <input type="file" id="imgInput" accept="image/*" />
   <input type="text" id="textInput" placeholder="Enter prophecy text" />
   <div class="checkbox-container">
@@ -193,7 +193,8 @@
   </div>
   <div class="checkbox-container">
     <label for="imgYOffset">Image Y Offset:</label>
-    <input type="range" id="imgYOffset" min="-256" max="256" value="0" />
+    <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
+    <span id="imgYOffsetValue">0px</span>
   </div>
   <div id="textContainer">Your prophecy here</div>
   <div id="output">
@@ -398,6 +399,7 @@
     });
     
     imgYOffset.addEventListener('input', () => {
+      imgYOffsetValue.textContent = imgYOffset.value + 'px';
       if (maskImage) drawPanel();
     });
 
