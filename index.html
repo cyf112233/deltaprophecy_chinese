@@ -18,13 +18,18 @@
     }
     
     html, body {
-      background: black;
       margin: 0; padding: 0;
       font-family: 'DTMSans', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: white;
+      background: black;
+    }
+    
+    @keyframes pageBgScroll {
+      0% { background-position: 0 0; }
+      100% { background-position: -316px 238px; } /* move left by width, down by height */
     }
 
     #textContainer {
@@ -70,10 +75,12 @@
       z-index: 1;
       opacity: 0.4;
       pointer-events: none;
+      top: -50px;
     }
 
     #panel {
       z-index: 2;
+      top: -50px;
     }
 
     input[type="file"], input[type="text"] {
@@ -99,6 +106,7 @@
     h1 {
       margin-top: 15px;
       margin-bottom: 5px;
+      font-weight: normal;
     }
     
     footer {
@@ -114,6 +122,61 @@
     .alt-font {
       font-family: 'ProphecyType', serif;
     }
+    
+    /* Remove default appearance */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 125px;
+      max-width: 512px;
+      height: 12px;
+      background: transparent; /* Make input background transparent */
+      margin-top: 10px;
+      padding: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    /* WebKit browsers (Chrome, Safari, Edge) */
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2); /* translucent white */
+      border-radius: 6px;
+    }
+    
+    /* Firefox */
+    input[type="range"]::-moz-range-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+    }
+    
+    /* Optional: style the slider thumb */
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      margin-top: -4px; /* Center thumb vertically */
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+    
   </style>
 </head>
 <body>
@@ -263,7 +326,7 @@
 
       // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
-      const displayY = parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
+      const displayY = -parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
       ctx.drawImage(resultCanvas, displayX, displayY);
     }
 
@@ -278,7 +341,7 @@
       
       // Center the ghost icon same as the main panel
       const displayX = (512 - resultCanvas.width) / 2;
-      const displayY = parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
+      const displayY = -parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
       gtx.drawImage(resultCanvas, displayX, displayY);
       
       gtx.setTransform(1, 0, 0, 1, 0, 0);
