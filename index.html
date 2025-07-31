@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prophecy Panel Generator</title>
+  <style>
+    html, body {
+      background: black;
+      margin: 0; padding: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+    }
+
+    #textContainer {
+      width: 75vw;
+      max-width: 512px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 2.5vw;
+      line-height: 1.3;
+      color: transparent;
+      background-size: 256px 256px;
+      -webkit-background-clip: text;
+      background-clip: text;
+      mix-blend-mode: screen;
+      animation: scrollBg 4s linear infinite;
+      background-repeat: repeat;
+    }
+
+    @keyframes scrollBg {
+      0% { background-position: 0 0; }
+      100% { background-position: 512px 512px; }
+    }
+
+    #output {
+      position: relative;
+      width: 75vw;
+      max-width: 512px;
+      aspect-ratio: 1 / 1;
+    }
+
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      image-rendering: pixelated;
+      background: transparent;
+    }
+
+    #ghostIcon {
+      z-index: 1;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    #panel {
+      z-index: 2;
+    }
+
+    input[type="file"], input[type="text"] {
+      margin-top: 10px;
+      padding: 5px;
+      width: 75vw;
+      max-width: 512px;
+    }
+
+    h1 {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prophecy Panel Generator</h1>
+  <input type="file" id="imgInput" accept="image/*" />
+  <input type="text" id="textInput" placeholder="Enter prophecy text" />
+  <div id="textContainer">Your prophecy here</div>
+  <div id="output">
+    <canvas id="ghostIcon" width="512" height="512"></canvas>
+    <canvas id="panel" width="512" height="512"></canvas>
+  </div>
+
+  <script>
+    const imgInput = document.getElementById('imgInput');
+    const textInput = document.getElementById('textInput');
+    const panel = document.getElementById('panel');
+    const ghostIcon = document.getElementById('ghostIcon');
+    const ctx = panel.getContext('2d');
+    const gtx = ghostIcon.getContext('2d');
+    const textContainer = document.getElementById('textContainer');
+
+    let maskImage = null;
+    let resultCanvas = null;
+    let scrollOffset = 0;
+    let ghostStarted = false;
+    let placeholder = null;
+
+    function loadImageFromFile(imagePath) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const tileSize = 256;
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = tileSize;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = false;
+          // Draw the 256x256 image directly
+          ctx.drawImage(img, 0, 0, tileSize, tileSize);
+          resolve(canvas);
+        };
+        img.onerror = (e) => {
+          console.error('Failed to load image from ./assets/depth.png:', e);
+          // Create a fallback pattern
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ff0000';
+          ctx.fillRect(0, 0, 128, 128);
+          ctx.fillStyle = '#00ff00';
+          ctx.fillRect(128, 0, 128, 128);
+          ctx.fillStyle = '#0000ff';
+          ctx.fillRect(0, 128, 128, 128);
+          ctx.fillStyle = '#ffff00';
+          ctx.fillRect(128, 128, 128, 128);
+          resolve(canvas);
+        };
+        img.src = imagePath;
+      });
+    }
+
+    function drawPanel() {
+      if (!maskImage || !placeholder) return;
+
+      scrollOffset = (scrollOffset + 1) % placeholder.width;
+      ctx.clearRect(0, 0, 512, 512);
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = tempCanvas.height = 256;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.imageSmoothingEnabled = false;
+
+      const offset = scrollOffset % placeholder.width;
+
+      // Tile the placeholder texture over 256x256 area with scroll offset
+      for (let y = -offset; y < 256 + placeholder.height; y += placeholder.height) {
+        for (let x = -offset; x < 256 + placeholder.width; x += placeholder.width) {
+          tempCtx.drawImage(placeholder, x, y);
+        }
+      }
+
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = maskCanvas.height = 256;
+      const maskCtx = maskCanvas.getContext('2d');
+      maskCtx.clearRect(0, 0, 256, 256);
+
+      // Scale mask image to fit 256x256
+      const scale = Math.min(256 / maskImage.width, 256 / maskImage.height);
+      const dw = maskImage.width * scale;
+      const dh = maskImage.height * scale;
+      const dx = (256 - dw) / 2;
+      const dy = (256 - dh) / 2;
+
+      maskCtx.drawImage(maskImage, dx, dy, dw, dh);
+
+      const maskData = maskCtx.getImageData(0, 0, 256, 256);
+      const texData = tempCtx.getImageData(0, 0, 256, 256);
+      const result = tempCtx.createImageData(256, 256);
+
+      for (let i = 0; i < maskData.data.length; i += 4) {
+        const r = maskData.data[i];
+        const g = maskData.data[i + 1];
+        const b = maskData.data[i + 2];
+        const a = maskData.data[i + 3];
+        const brightness = (r + g + b) / 3;
+
+        if (brightness > 200 && a > 0) {
+          result.data[i] = texData.data[i];
+          result.data[i + 1] = texData.data[i + 1];
+          result.data[i + 2] = texData.data[i + 2];
+          result.data[i + 3] = 255;
+        } else {
+          result.data[i + 3] = 0;
+        }
+      }
+
+      resultCanvas = document.createElement('canvas');
+      resultCanvas.width = resultCanvas.height = 256;
+      resultCanvas.getContext('2d').putImageData(result, 0, 0);
+
+      ctx.drawImage(resultCanvas, 128, 0);
+    }
+
+    function drawGhostIcon() {
+      if (!resultCanvas) return;
+
+      const t = performance.now() / 1000;
+      const offset = Math.sin(t * 2) * 6;
+
+      gtx.clearRect(0, 0, 512, 512);
+      gtx.setTransform(1, 0, 0, 1, offset, offset);
+      gtx.drawImage(resultCanvas, 128, 0);
+      gtx.setTransform(1, 0, 0, 1, 0, 0);
+
+      requestAnimationFrame(drawGhostIcon);
+    }
+
+    function tryStartGhost() {
+      if (!ghostStarted && resultCanvas) {
+        ghostStarted = true;
+        requestAnimationFrame(drawGhostIcon);
+      }
+    }
+
+    imgInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const img = new Image();
+      img.onload = () => {
+        maskImage = img;
+        drawPanel();
+        tryStartGhost();
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    textInput.addEventListener('input', () => {
+      textContainer.textContent = textInput.value || 'Your prophecy here';
+    });
+
+    // Setup placeholder tile and start draw loop
+    loadImageFromFile('./assets/depth.png').then((tile) => {
+      placeholder = tile;
+      textContainer.style.backgroundImage = `url(${placeholder.toDataURL()})`;
+      setInterval(drawPanel, 1000 / 30);
+    });
+  </script>
+</body>
+</html>
