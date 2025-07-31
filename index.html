@@ -23,7 +23,7 @@
 
     #textContainer {
       width: 75vw;
-      max-width: 512px;
+      max-width: 400;
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
@@ -234,7 +234,7 @@
 
       // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
-      const displayY = (512 - canvasSize) / 2;
+      const displayY = 0 // (512 - canvasSize) / 2;
       ctx.drawImage(resultCanvas, displayX, displayY);
     }
 
@@ -249,7 +249,7 @@
       
       // Center the ghost icon same as the main panel
       const displayX = (512 - resultCanvas.width) / 2;
-      const displayY = (512 - resultCanvas.height) / 2;
+      const displayY = 0 // (512 - resultCanvas.height) / 2;
       gtx.drawImage(resultCanvas, displayX, displayY);
       
       gtx.setTransform(1, 0, 0, 1, 0, 0);
