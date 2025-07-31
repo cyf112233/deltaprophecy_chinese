@@ -381,9 +381,12 @@
     });
 
     // Setup placeholder tile and start draw loop
-    loadImageFromFile('./assets/depth-2.png').then((tile) => {
+    Promise.all([
+      loadImageFromFile('./assets/depth-2.png'), // For the masked panel
+      loadImageFromFile('./assets/depth-3.png') // For the text
+    ]).then(([tile, textBG]) => {
       placeholder = tile;
-      textContainer.style.backgroundImage = `url(${placeholder.toDataURL()})`;
+      textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
       setInterval(drawPanel, 1000 / 30);
     });
     
