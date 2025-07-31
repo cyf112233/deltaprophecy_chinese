@@ -390,7 +390,7 @@
     // Setup placeholder tile and start draw loop
     Promise.all([
       loadImageFromFile('./assets/depth-2.png'), // For the masked panel
-      loadImageFromFile('./assets/depth-5.png') // For the text
+      loadImageFromFile('./assets/depth-6.png') // For the text
     ]).then(([tile, textBG]) => {
       placeholder = tile;
       textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
