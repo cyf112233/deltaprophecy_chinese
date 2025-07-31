@@ -35,7 +35,7 @@
       text-align: center;
       font-family: 'ProphecyType', serif;
       font-size: 32px;
-      line-height: 1.3;
+      line-height: 1;
       color: transparent;
       background-size: 256px 256px;
       -webkit-background-clip: text;
@@ -409,6 +409,10 @@
         tryStartGhost();
       };
       defaultImg.src = './assets/heroes.png';
+
+      textInput.value = "But lo, on hopes and dreams they send. /n Three heroes at the world's end.";
+      // Trigger input event so display updates immediately
+      textInput.dispatchEvent(new Event('input'));
     });    
   </script>
 </body>
