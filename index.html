@@ -11,10 +11,16 @@
       font-display: swap;
     }
     
+    @font-face {
+      font-family: 'DTMSans';
+      src: url('./assets/DTM-Sans.otf') format('opentype');
+      font-display: swap;
+    }
+    
     html, body {
       background: black;
       margin: 0; padding: 0;
-      font-family: sans-serif;
+      font-family: 'DTMSans', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -23,13 +29,13 @@
 
     #textContainer {
       width: 75vw;
-      max-width: 400px;
+      max-width: 400;
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
-      font-family: 'ProphecyType', sans-serif;
+      font-family: 'ProphecyType', serif;
       font-size: 40px;
-      line-height: 1;
+      line-height: 1.3;
       color: transparent;
       background-size: 256px 256px;
       -webkit-background-clip: text;
@@ -94,6 +100,20 @@
       margin-top: 15px;
       margin-bottom: 5px;
     }
+    
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      color: #ccc;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      max-width: 512px;
+    }
+    
+    .alt-font {
+      font-family: 'ProphecyType', serif;
+    }
   </style>
 </head>
 <body>
@@ -104,11 +124,19 @@
     <input type="checkbox" id="keepOriginalRes" />
     <label for="keepOriginalRes">Keep original image resolution</label>
   </div>
+  <div class="checkbox-container">
+    <label for="imgYOffset">Image Y Offset:</label>
+    <input type="range" id="imgYOffset" min="-256" max="256" value="0" />
+  </div>
   <div id="textContainer">Your prophecy here</div>
   <div id="output">
     <canvas id="ghostIcon" width="512" height="512"></canvas>
     <canvas id="panel" width="512" height="512"></canvas>
   </div>
+  
+  <footer>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
+  </footer>
 
   <script>
     const imgInput = document.getElementById('imgInput');
@@ -119,6 +147,7 @@
     const ctx = panel.getContext('2d');
     const gtx = ghostIcon.getContext('2d');
     const textContainer = document.getElementById('textContainer');
+    const imgYOffset = document.getElementById('imgYOffset');
 
     let maskImage = null;
     let resultCanvas = null;
@@ -234,7 +263,7 @@
 
       // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
-      const displayY = 0 // (512 - canvasSize) / 2;
+      const displayY = parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
       ctx.drawImage(resultCanvas, displayX, displayY);
     }
 
@@ -249,7 +278,7 @@
       
       // Center the ghost icon same as the main panel
       const displayX = (512 - resultCanvas.width) / 2;
-      const displayY = 0 // (512 - resultCanvas.height) / 2;
+      const displayY = parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
       gtx.drawImage(resultCanvas, displayX, displayY);
       
       gtx.setTransform(1, 0, 0, 1, 0, 0);
@@ -294,6 +323,11 @@
       textContainer.style.backgroundImage = `url(${placeholder.toDataURL()})`;
       setInterval(drawPanel, 1000 / 30);
     });
+    
+    imgYOffset.addEventListener('input', () => {
+      if (maskImage) drawPanel();
+    });
+    
   </script>
 </body>
 </html>
