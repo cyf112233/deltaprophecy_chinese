@@ -390,7 +390,7 @@
     // Setup placeholder tile and start draw loop
     Promise.all([
       loadImageFromFile('./assets/depth-2.png'), // For the masked panel
-      loadImageFromFile('./assets/depth-6.png') // For the text
+      loadImageFromFile('./assets/depth-text.png') // For the text
     ]).then(([tile, textBG]) => {
       placeholder = tile;
       textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
@@ -400,7 +400,16 @@
     imgYOffset.addEventListener('input', () => {
       if (maskImage) drawPanel();
     });
-    
+
+    window.addEventListener('load', () => {
+      const defaultImg = new Image();
+      defaultImg.onload = () => {
+        maskImage = defaultImg;
+        drawPanel();
+        tryStartGhost();
+      };
+      defaultImg.src = './assets/heroes.png';
+    });    
   </script>
 </body>
 </html>
