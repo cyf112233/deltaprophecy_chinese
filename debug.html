@@ -50,13 +50,13 @@
       100% { background-position: 512px 512px; }
     }
 
-#output {
-  position: relative;
-  width: 90vw;
-  max-width: 512px;
-  aspect-ratio: 2 / 1;
-  max-height: 256px;
-}
+    #output {
+      position: relative;
+      width: 90vw;
+      max-width: 512px;
+      aspect-ratio: 2 / 1;
+      max-height: 256px;
+    }
 
     canvas {
       position: absolute;
@@ -91,18 +91,12 @@
 
     .checkbox-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: white;
+      gap: 8px;
       margin-top: 10px;
       text-align: center;
-    }
-
-    .checkbox-container label,
-    .checkbox-container span {
-      margin-bottom: 4px;
-      font-family: 'DTMSans', sans-serif;
+      width: 100%;
     }
 
     h1 {
@@ -231,15 +225,19 @@
   <input type="file" id="imgInput" accept="image/*" style="display:none;" />
   <label for="imgInput" class="custom-file-upload">Upload Image</label>
   <input type="text" id="textInput" placeholder="Enter prophecy text" />
-  <div class="checkbox-container">
-    <label for="imgScale">Image Scale:</label>
-    <input type="range" id="imgScale" min="0.1" max="3" value="1" step="0.01" />
-    <span id="imgScaleValue">1.00×</span>
+  <div style="display: flex; justify-content: center; width: 100%;">
+    <div class="checkbox-container">
+      <label for="imgScale">Image Scale:</label>
+      <input type="range" id="imgScale" min="0.1" max="3" value="1" step="0.01" />
+      <span id="imgScaleValue">1.00×</span>
+    </div>
   </div>
-  <div class="checkbox-container">
-    <label for="imgYOffset">Image Y Offset:</label>
-    <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
-    <span id="imgYOffsetValue">0px</span>
+  <div style="display: flex; justify-content: center; width: 100%;">
+    <div class="checkbox-container">
+      <label for="imgYOffset">Image Y Offset:</label>
+      <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
+      <span id="imgYOffsetValue">0px</span>
+    </div>
   </div>
   <div id="textContainer">Your prophecy here</div>
   <div id="output">
