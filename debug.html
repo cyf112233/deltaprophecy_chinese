@@ -95,10 +95,6 @@
       gap: 8px;
     }
 
-    #keepOriginalRes {
-      transform: scale(1.2);
-    }
-
     h1 {
       margin-top: 15px;
       margin-bottom: 5px;
@@ -189,8 +185,9 @@
   <input type="file" id="imgInput" accept="image/*" />
   <input type="text" id="textInput" placeholder="Enter prophecy text" />
   <div class="checkbox-container">
-    <input type="checkbox" id="keepOriginalRes" />
-    <label for="keepOriginalRes">Keep original image resolution</label>
+    <label for="imgScale">Image Scale:</label>
+    <input type="range" id="imgScale" min="0.1" max="3" value="1" step="0.01" />
+    <span id="imgScaleValue">1.00×</span>
   </div>
   <div class="checkbox-container">
     <label for="imgYOffset">Image Y Offset:</label>
@@ -202,11 +199,7 @@
     <canvas id="ghostIcon" width="512" height="256"></canvas>
     <canvas id="panel" width="512" height="256"></canvas>
   </div>
-    <div class="checkbox-container">
-    <label for="imgScale">Image Scale:</label>
-    <input type="range" id="imgScale" min="0.1" max="3" value="1" step="0.01" />
-    <span id="imgScaleValue">1.00×</span>
-  </div>
+
   <div id="directions">
   <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use /n to move to a new line.</p>
   </div>
@@ -217,7 +210,6 @@
   <script>
     const imgInput = document.getElementById('imgInput');
     const textInput = document.getElementById('textInput');
-    const keepOriginalRes = document.getElementById('keepOriginalRes');
     const panel = document.getElementById('panel');
     const ghostIcon = document.getElementById('ghostIcon');
     const ctx = panel.getContext('2d');
@@ -274,7 +266,7 @@
       ctx.clearRect(0, 0, 512, 512);
 
       // Determine canvas size based on setting
-      const useOriginalRes = keepOriginalRes.checked;
+      const useOriginalRes = false;
       const canvasSize = useOriginalRes ? Math.max(maskImage.width, maskImage.height, 256) : 256;
       
       const tempCanvas = document.createElement('canvas');
@@ -306,19 +298,11 @@
         dy = (canvasSize - dh) / 2;
       } else {
         // Scale to fit within canvas
-        let scale;
-        if (keepOriginalRes.checked) {
-          dw = maskImage.width;
-          dh = maskImage.height;
-          dx = (canvasSize - dw) / 2;
-          dy = (canvasSize - dh) / 2;
-        } else {
-          scale = parseFloat(imgScale.value);
-          dw = maskImage.width * scale;
-          dh = maskImage.height * scale;
-          dx = (canvasSize - dw) / 2;
-          dy = (canvasSize - dh) / 2;
-        }
+        const scale = Math.min(canvasSize / maskImage.width, canvasSize / maskImage.height);
+        dw = maskImage.width * scale;
+        dh = maskImage.height * scale;
+        dx = (canvasSize - dw) / 2;
+        dy = (canvasSize - dh) / 2;
       }
 
       maskCtx.drawImage(maskImage, dx, dy, dw, dh);
@@ -351,7 +335,16 @@
       // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
       const displayY = -parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
-      ctx.drawImage(resultCanvas, displayX, displayY);
+      let scale = keepOriginalRes.checked ? 1 : parseFloat(imgScale.value);
+
+      // Scale after masking
+      const scaledW = resultCanvas.width * scale;
+      const scaledH = resultCanvas.height * scale;
+      const scaledX = (512 - scaledW) / 2;
+      const scaledY = -parseInt(imgYOffset.value, 10);
+      
+      ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+
     }
 
     function drawGhostIcon() {
@@ -366,8 +359,15 @@
       // Center the ghost icon same as the main panel
       const displayX = (512 - resultCanvas.width) / 2;
       const displayY = -parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
-      gtx.drawImage(resultCanvas, displayX, displayY);
+      let scale = keepOriginalRes.checked ? 1 : parseFloat(imgScale.value);
+
+      const scaledW = resultCanvas.width * scale;
+      const scaledH = resultCanvas.height * scale;
+      const scaledX = (512 - scaledW) / 2;
+      const scaledY = -parseInt(imgYOffset.value, 10);
       
+      gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+
       gtx.setTransform(1, 0, 0, 1, 0, 0);
 
       requestAnimationFrame(drawGhostIcon);
@@ -398,13 +398,6 @@
       textContainer.innerHTML = formattedText;
     });
 
-    // Redraw when checkbox state changes
-    keepOriginalRes.addEventListener('change', () => {
-      if (maskImage) {
-        drawPanel();
-      }
-    });
-
     // Setup placeholder tile and start draw loop
     Promise.all([
       loadImageFromFile('./assets/depth-2.png'), // For the masked panel
@@ -422,7 +415,7 @@
 
     imgScale.addEventListener('input', () => {
       imgScaleValue.textContent = parseFloat(imgScale.value).toFixed(2) + '×';
-      if (maskImage && !keepOriginalRes.checked) drawPanel();
+      if (maskImage) drawPanel();
     });
 
     window.addEventListener('load', () => {
