@@ -109,7 +109,7 @@
     }
 
     body.susie-theme #background {
-      opacity: 0.85;
+      opacity: 0.5;
     }
 
     input[type="file"], input[type="text"] {
@@ -519,7 +519,7 @@
       const scaledW = canvasSize * scale;
       const scaledH = canvasSize * scale;
       const imageX = (512 - scaledW) / 2; 
-      const imageY = 100 + yOffset; 
+      const imageY = 0 + yOffset; 
 
       const radiusX = 160; 
       const radiusY = 100;  
@@ -578,7 +578,7 @@
       Promise.all([
         loadImageFromFile(getAssetPath('depth-blue')), 
         loadImageFromFile(getAssetPath('depth-text')),
-        loadImageFromFile(getAssetPath('depth-dark'))
+        loadImageFromFile(getAssetPath('depth-darker-new'))
       ]).then(([tile, textBG, bgTile]) => {
         placeholder = tile;
         backgroundTile = bgTile;
@@ -624,7 +624,7 @@
 
     function animateSineWrapper() {
       const t = performance.now() / 1000;
-      const offset = Math.sin(t * 1.5) * 4;
+      const offset = Math.sin(t * 1.5) * 10;
       const sineWrapper = document.getElementById('sineWrapper');
       if (sineWrapper) {
         sineWrapper.style.transform = `translateY(${offset}px)`;
