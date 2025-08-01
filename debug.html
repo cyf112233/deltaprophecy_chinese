@@ -7,16 +7,16 @@
   <style>
     @font-face {
       font-family: 'ProphecyType';
-      src: url('./assets/PROPHECYTYPE.ttf') format('truetype');
+      src: url('./assets/fonts/PROPHECYTYPE.ttf') format('truetype');
       font-display: swap;
     }
-    
+
     @font-face {
       font-family: 'DTMSans';
-      src: url('./assets/DTM-Sans.otf') format('opentype');
+      src: url('./assets/fonts/DTM-Sans.otf') format('opentype');
       font-display: swap;
     }
-    
+
     html, body {
       margin: 0; padding: 0;
       font-family: 'DTMSans', sans-serif;
@@ -60,16 +60,19 @@
 
     canvas {
       position: absolute;
-      width: 512px;   /* fix to pixel size */
-      height: 256px;  /* fix to pixel size */
-      top: 0; left: 0;
+      width: 90vw;
+      max-width: 512px;
+      height: auto;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       image-rendering: -moz-crisp-edges;
       image-rendering: -webkit-optimize-contrast;
       background: transparent;
     }
-    
+
     #ghostIcon {
       z-index: 1;
       opacity: 0.4;
@@ -77,9 +80,31 @@
       top: -50px;
     }
 
+    #ghostIcon2 {
+      z-index: 1;
+      opacity: 0.2;
+      pointer-events: none;
+      top: -50px;
+    }
+
     #panel {
       z-index: 2;
       top: -50px;
+    }
+
+    #background {
+      position: absolute;
+      width: 90vw;
+      max-width: 512px;
+      height: auto;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 0; 
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
     }
 
     input[type="file"], input[type="text"] {
@@ -104,7 +129,7 @@
       margin-bottom: 20px;
       text-align: center;
     }
-    
+
     footer {
       margin-top: 20px;
       padding: 10px;
@@ -114,42 +139,38 @@
       width: 100%;
       max-width: 512px;
     }
-    
+
     .alt-font {
       font-family: 'ProphecyType', serif;
     }
-    
-    /* Remove default appearance */
+
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
       width: 125px;
       max-width: 512px;
       height: 10px;
-      background: transparent; /* Make input background transparent */
+      background: transparent; 
       margin-top: 10px;
       padding: 0;
       border-radius: 0px;
       cursor: pointer;
     }
-    
-    /* WebKit browsers (Chrome, Safari, Edge) */
+
     input[type="range"]::-webkit-slider-runnable-track {
       width: 100%;
       height: 10px;
-      background: rgba(255, 255, 255, 0.2); /* translucent white */
+      background: rgba(255, 255, 255, 0.2); 
       border-radius: 0px;
     }
-    
-    /* Firefox */
+
     input[type="range"]::-moz-range-track {
       width: 100%;
       height: 10px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 0px;
     }
-    
-    /* Optional: style the slider thumb */
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -157,11 +178,11 @@
       height: 15px;
       background: white;
       border: 0px;
-      margin-top: -4px; /* Center thumb vertically */
+      margin-top: -4px; 
       cursor: pointer;
       box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
-    
+
     input[type="range"]::-moz-range-thumb {
       width: 15px;
       height: 15px;
@@ -170,7 +191,7 @@
       cursor: pointer;
       box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
-    
+
     #directions {
       max-width: 512px;
       text-align: center;
@@ -187,13 +208,14 @@
       border: 2px solid white;
       padding: 5px 10px;
       outline: none;
-      border-radius: 0px; /* optional, for rounded corners */
+      border-radius: 0px; 
       box-sizing: border-box;
     }
+
     input[type="text"]:focus {
       outline: none;
-      border-color: #fff; /* keep white outline on focus */
-      box-shadow: 0 0 5px white; /* optional glow on focus */
+      border-color: #fff; 
+      box-shadow: 0 0 5px white; 
     }
 
     .custom-file-upload {
@@ -208,16 +230,20 @@
       user-select: none;
       text-align: center;
     }
-    
+
     .custom-file-upload:hover {
       background-color: #222;
       border-color: #fff;
     }
-    
+
     .custom-file-upload:active {
       background-color: #111;
     }
-    
+
+    #floatingContainer {
+      will-change: transform;
+    }
+
   </style>
 </head>
 <body>
@@ -239,14 +265,19 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
-  <div id="textContainer">Your prophecy here</div>
-  <div id="output">
-    <canvas id="ghostIcon" width="512" height="256"></canvas>
-    <canvas id="panel" width="512" height="256"></canvas>
+  <div id="floatingContainer">
+    <div id="textContainer">Your prophecy here</div>
+    <div id="output">
+      <canvas id="background" width="512" height="256"></canvas>
+      <canvas id="ghostIcon2" width="512" height="256"></canvas>
+      <canvas id="ghostIcon" width="512" height="256"></canvas>
+      <canvas id="panel" width="512" height="256"></canvas>
+    </div>
   </div>
 
   <div id="directions">
-  <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use /n to move to a new line.<br><br>I couldn't find a way to get GIF exports to work, so you kinda just have to take a screenshot.</p>
+  <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use \n to move to a new line.<br><br>I couldn't find a way to get GIF exports to work, so you kinda just have to take a screenshot.<br><br>If your image isn't monochrome, you can make it so <a href="https://deltaprophecy.vercel.app/monochrome.html" target="_blank" rel="noopener noreferrer">here</a>.
+</p>
   </div>
   <footer>
     <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
@@ -263,13 +294,16 @@
     const imgYOffset = document.getElementById('imgYOffset');
     const imgScale = document.getElementById('imgScale');
     const imgScaleValue = document.getElementById('imgScaleValue');
-
+    const backgroundCanvas = document.getElementById('background');
+    const bgCtx = backgroundCanvas.getContext('2d');
 
     let maskImage = null;
     let resultCanvas = null;
     let scrollOffset = 0;
     let ghostStarted = false;
     let placeholder = null;
+    let backgroundTile = null;
+    let backgroundScrollOffset = 0;
 
     function loadImageFromFile(imagePath) {
       return new Promise(resolve => {
@@ -280,13 +314,13 @@
           canvas.width = canvas.height = tileSize;
           const ctx = canvas.getContext('2d');
           ctx.imageSmoothingEnabled = false;
-          // Draw the 256x256 image directly
+
           ctx.drawImage(img, 0, 0, tileSize, tileSize);
           resolve(canvas);
         };
         img.onerror = (e) => {
           console.error('Failed to load image from ./assets/depth.png:', e);
-          // Create a fallback pattern
+
           const canvas = document.createElement('canvas');
           canvas.width = canvas.height = 256;
           const ctx = canvas.getContext('2d');
@@ -311,10 +345,9 @@
       ctx.clearRect(0, 0, 512, 512);
       ctx.imageSmoothingEnabled = false;
 
-      // Determine canvas size based on setting
       const useOriginalRes = false;
       const canvasSize = useOriginalRes ? Math.max(maskImage.width, maskImage.height, 256) : 256;
-      
+
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = tempCanvas.height = canvasSize;
       const tempCtx = tempCanvas.getContext('2d');
@@ -322,7 +355,6 @@
 
       const offset = scrollOffset % placeholder.width;
 
-      // Tile the placeholder texture over the canvas area with scroll offset
       for (let y = -offset; y < canvasSize + placeholder.height; y += placeholder.height) {
         for (let x = -offset; x < canvasSize + placeholder.width; x += placeholder.width) {
           tempCtx.drawImage(placeholder, x, y);
@@ -336,15 +368,15 @@
       maskCtx.imageSmoothingEnabled = false;
 
       let dx, dy, dw, dh;
-      
+
       if (useOriginalRes) {
-        // Keep original resolution - center the image
+
         dw = maskImage.width;
         dh = maskImage.height;
         dx = (canvasSize - dw) / 2;
         dy = (canvasSize - dh) / 2;
       } else {
-        // Scale to fit within canvas
+
         const scale = Math.min(canvasSize / maskImage.width, canvasSize / maskImage.height);
         dw = maskImage.width * scale;
         dh = maskImage.height * scale;
@@ -379,17 +411,15 @@
       resultCanvas.width = resultCanvas.height = canvasSize;
       resultCanvas.getContext('2d').putImageData(result, 0, 0);
 
-      // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
-      const displayY = -parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
+      const displayY = -parseInt(imgYOffset.value, 10); 
       let scale = parseFloat(imgScale.value);
 
-      // Scale after masking
       const scaledW = resultCanvas.width * scale;
       const scaledH = resultCanvas.height * scale;
       const scaledX = (512 - scaledW) / 2;
       const scaledY = -parseInt(imgYOffset.value, 10);
-      
+
       ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
 
     }
@@ -398,27 +428,73 @@
       if (!resultCanvas) return;
 
       const t = performance.now() / 1000;
-      const offset = Math.sin(t * 2) * 6;
+      const offset1 = Math.sin(t * 2) * 6;
+      const offset2 = offset1 * 2;
 
       gtx.clearRect(0, 0, 512, 512);
       gtx.imageSmoothingEnabled = false;
-      gtx.setTransform(1, 0, 0, 1, offset, offset);
-      
-      // Center the ghost icon same as the main panel
-      const displayX = (512 - resultCanvas.width) / 2;
-      const displayY = -parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
-      let scale = parseFloat(imgScale.value);
+      gtx.setTransform(1, 0, 0, 1, offset1, offset1);
 
+      let scale = parseFloat(imgScale.value);
       const scaledW = resultCanvas.width * scale;
       const scaledH = resultCanvas.height * scale;
       const scaledX = (512 - scaledW) / 2;
       const scaledY = -parseInt(imgYOffset.value, 10);
-      
-      gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
 
+      gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx.setTransform(1, 0, 0, 1, 0, 0);
 
+      const gtx2 = document.getElementById('ghostIcon2').getContext('2d');
+      gtx2.clearRect(0, 0, 512, 512);
+      gtx2.imageSmoothingEnabled = false;
+      gtx2.setTransform(1, 0, 0, 1, offset2, offset2);
+      gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+      gtx2.setTransform(1, 0, 0, 1, 0, 0);
+
       requestAnimationFrame(drawGhostIcon);
+    }
+
+    function drawBackground() {
+      if (!backgroundTile) return;
+
+      backgroundScrollOffset = (backgroundScrollOffset + 0.5) % backgroundTile.width;
+      bgCtx.clearRect(0, 0, 512, 256);
+      bgCtx.imageSmoothingEnabled = false;
+
+      const offset = backgroundScrollOffset % backgroundTile.width;
+      const yOffset = -parseInt(imgYOffset.value, 10); 
+
+      for (let y = -offset + yOffset; y < 256 + backgroundTile.height + yOffset; y += backgroundTile.height) {
+        for (let x = -offset; x < 512 + backgroundTile.width; x += backgroundTile.width) {
+          bgCtx.drawImage(backgroundTile, x, y);
+        }
+      }
+
+      const scale = parseFloat(imgScale.value);
+      const canvasSize = 256; 
+      const scaledW = canvasSize * scale;
+      const scaledH = canvasSize * scale;
+      const imageX = (512 - scaledW) / 2; 
+      const imageY = 100 + yOffset; 
+
+      const radiusX = 160; 
+      const radiusY = 100;  
+
+      bgCtx.save();
+
+      bgCtx.translate(imageX + scaledW/2, imageY);
+      bgCtx.scale(radiusX / radiusY, 1); 
+      bgCtx.translate(-(imageX + scaledW/2), -imageY);
+
+      const gradient = bgCtx.createRadialGradient(imageX + scaledW/2, imageY, 0, imageX + scaledW/2, imageY, radiusY);
+      gradient.addColorStop(0, 'rgba(0,0,0,0)'); 
+      gradient.addColorStop(0.6, 'rgba(0,0,0,0)'); 
+      gradient.addColorStop(1, 'rgba(0,0,0,1)');   
+
+      bgCtx.fillStyle = gradient;
+      bgCtx.fillRect(0, 0, 512, 256); 
+
+      bgCtx.restore();
     }
 
     function tryStartGhost() {
@@ -442,23 +518,30 @@
     });
 
     textInput.addEventListener('input', () => {
-      const formattedText = (textInput.value || 'Your prophecy here').replace(/\/n/g, '<br>');
+      const formattedText = (textInput.value || 'Your prophecy here').replace(/\\n/g, '<br>');
       textContainer.innerHTML = formattedText;
     });
 
-    // Setup placeholder tile and start draw loop
     Promise.all([
-      loadImageFromFile('./assets/depth-2.png'), // For the masked panel
-      loadImageFromFile('./assets/depth-text.png') // For the text
-    ]).then(([tile, textBG]) => {
+      loadImageFromFile('./assets/depth/depth-blue.png'), 
+      loadImageFromFile('./assets/depth/depth-text.png'),
+      loadImageFromFile('./assets/depth/depth-dark.png')
+    ]).then(([tile, textBG, bgTile]) => {
       placeholder = tile;
+      backgroundTile = bgTile;
       textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
-      setInterval(drawPanel, 1000 / 30);
+      setInterval(() => {
+        drawPanel();
+        drawBackground();
+      }, 1000 / 30);
     });
-    
+
     imgYOffset.addEventListener('input', () => {
       imgYOffsetValue.textContent = imgYOffset.value + 'px';
-      if (maskImage) drawPanel();
+      if (maskImage) {
+        drawPanel();
+        drawBackground();
+      }
     });
 
     imgScale.addEventListener('input', () => {
@@ -473,12 +556,25 @@
         drawPanel();
         tryStartGhost();
       };
-      defaultImg.src = './assets/heroes.png';
+      defaultImg.src = './assets/base-panels/heroes.png';
 
-      textInput.value = "But lo, on hopes and dreams they send. /n Three heroes at the world's end.";
-      // Trigger input event so display updates immediately
+      textInput.value = "But lo, on hopes and dreams they send. \\n Three heroes at the world's end.";
+
       textInput.dispatchEvent(new Event('input'));
     });    
+
+    function animateFloat() {
+      const now = performance.now() / 1000; // seconds
+      const offsetY = Math.sin(now * 2) * 6; // 6px vertical range
+    
+      const floatContainer = document.getElementById('floatingContainer');
+      floatContainer.style.transform = `translateY(${offsetY}px)`;
+    
+      requestAnimationFrame(animateFloat);
+    }
+    
+    requestAnimationFrame(animateFloat);
+
   </script>
 </body>
 </html>
