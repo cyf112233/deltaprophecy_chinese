@@ -242,6 +242,17 @@
 
     #floatingContainer {
       will-change: transform;
+      position: relative;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #centerWrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
     }
 
   </style>
@@ -265,7 +276,7 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
-  <div style="display: flex; justify-content: center; width: 100%;">
+  <div id="centerWrap">
     <div id="floatingContainer">
       <div id="textContainer">Your prophecy here</div>
       <div id="output">
@@ -565,12 +576,12 @@
       textInput.dispatchEvent(new Event('input'));
     });    
 
-    function animateFloat() {
-      const now = performance.now() / 1000; // seconds
-      const offsetY = Math.sin(now * 2) * 6; // 6px vertical range
+   function animateFloat() {
+      const now = performance.now() / 1000;
+      const offsetY = Math.sin(now * 2) * 6;
     
       const floatContainer = document.getElementById('floatingContainer');
-      floatContainer.style.transform = `translateY(${offsetY}px)`;
+      floatContainer.style.transform = `translate(-50%, ${offsetY}px)`;
     
       requestAnimationFrame(animateFloat);
     }
