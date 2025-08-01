@@ -7,13 +7,13 @@
   <style>
     @font-face {
       font-family: 'ProphecyType';
-      src: url('./assets/PROPHECYTYPE.ttf') format('truetype');
+      src: url('./assets/fonts/PROPHECYTYPE.ttf') format('truetype');
       font-display: swap;
     }
 
     @font-face {
       font-family: 'DTMSans';
-      src: url('./assets/DTM-Sans.otf') format('opentype');
+      src: url('./assets/fonts/DTM-Sans.otf') format('opentype');
       font-display: swap;
     }
 
@@ -510,9 +510,9 @@
     });
 
     Promise.all([
-      loadImageFromFile('./assets/depth-2.png'), 
-      loadImageFromFile('./assets/depth-text.png'),
-      loadImageFromFile('./assets/depth-dark.png')
+      loadImageFromFile('./assets/depth/depth-blue.png'), 
+      loadImageFromFile('./assets/depth/depth-text.png'),
+      loadImageFromFile('./assets/depth/depth-dark.png')
     ]).then(([tile, textBG, bgTile]) => {
       placeholder = tile;
       backgroundTile = bgTile;
