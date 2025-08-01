@@ -402,24 +402,10 @@
     textInput.dispatchEvent(new Event('input'));
   });
 </script>
-
   <!-- GIF.js + Export logic -->
   <script src="https://unpkg.com/gif.js.optimized/dist/gif.js"></script>
   <script>
     document.getElementById('exportGifBtn').addEventListener('click', () => {
-  if (!resultCanvas || !placeholder) {
-    alert("Please wait until the image and texture fully load.");
-    return;
-  }
-
-  const gif = new GIF({
-    workers: 2,
-    quality: 1,
-    width: 512,
-    height: 256,
-    workerScript: 'https://unpkg.com/gif.js.optimized/dist/gif.worker.js'
-  });
-
   const panel = document.getElementById('panel');
   const ghost = document.getElementById('ghostIcon');
   const combined = document.createElement('canvas');
@@ -427,34 +413,13 @@
   combined.height = 256;
   const ctx = combined.getContext('2d');
 
-  let frames = 150; // 5s @ 30fps
-  let count = 0;
+  ctx.drawImage(panel, 0, 0);
+  ctx.drawImage(ghost, 0, 0);
 
-  gif.on('finished', blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'prophecy.gif';
-    a.click();
-  });
-
-  // force draw current frame before capture
-  drawPanel();
-  drawGhostIcon();
-
-  setTimeout(() => {
-    function capture() {
-      ctx.clearRect(0, 0, 512, 256);
-      ctx.drawImage(panel, 0, 0);
-      ctx.drawImage(ghost, 0, 0);
-      gif.addFrame(ctx, { copy: true, delay: 1000 / 30 });
-      count++;
-      if (count < frames) requestAnimationFrame(capture);
-      else gif.render();
-    }
-
-    capture();
-  }, 100); // wait a bit for the ghost canvas to draw
+  const a = document.createElement('a');
+  a.href = combined.toDataURL('image/png');
+  a.download = 'prophecy.png';
+  a.click();
 });
   </script>
 </body>
