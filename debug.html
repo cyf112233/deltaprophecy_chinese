@@ -29,7 +29,7 @@
 
     #textContainer {
       width: 75vw;
-      max-width: 400;
+      max-width: 350px;
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
@@ -335,7 +335,7 @@
       // Center the result on the 512x512 display canvas
       const displayX = (512 - canvasSize) / 2;
       const displayY = -parseInt(imgYOffset.value, 10); // (512 - canvasSize) / 2;
-      let scale = keepOriginalRes.checked ? 1 : parseFloat(imgScale.value);
+      let scale = parseFloat(imgScale.value);
 
       // Scale after masking
       const scaledW = resultCanvas.width * scale;
@@ -359,7 +359,7 @@
       // Center the ghost icon same as the main panel
       const displayX = (512 - resultCanvas.width) / 2;
       const displayY = -parseInt(imgYOffset.value, 10); // (512 - resultCanvas.height) / 2;
-      let scale = keepOriginalRes.checked ? 1 : parseFloat(imgScale.value);
+      let scale = parseFloat(imgScale.value);
 
       const scaledW = resultCanvas.width * scale;
       const scaledH = resultCanvas.height * scale;
