@@ -240,18 +240,16 @@
 
       const img = new Image();
       img.onload = function () {
-        const scale = 256 / Math.max(img.width, img.height);
-        const newW = img.width * scale;
-        const newH = img.height * scale;
-
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
         originalImage = document.createElement('canvas');
-        originalImage.width = 256;
-        originalImage.height = 256;
+        originalImage.width = img.width;
+        originalImage.height = img.height;
+        
         const tempCtx = originalImage.getContext('2d');
-        tempCtx.fillStyle = '#000';
-        tempCtx.fillRect(0, 0, 256, 256);
-        tempCtx.drawImage(img, (256 - newW) / 2, (256 - newH) / 2, newW, newH);
-
+        tempCtx.drawImage(img, 0, 0);
+        
         applyThreshold(parseInt(thresholdSlider.value));
       };
 
