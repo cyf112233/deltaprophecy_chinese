@@ -108,6 +108,10 @@
       opacity: 0.5;
     }
 
+    body.susie-theme #background {
+      opacity: 0.85;
+    }
+
     input[type="file"], input[type="text"] {
       margin-top: 10px;
       padding: 5px;
@@ -581,6 +585,7 @@
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
         if (maskImage) drawPanel();
         drawBackground();
+        document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
       });
     }
 
