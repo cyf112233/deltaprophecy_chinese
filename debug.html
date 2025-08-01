@@ -64,6 +64,9 @@
       height: 100%;
       top: 0; left: 0;
       image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges; /* Firefox */
+      image-rendering: -webkit-optimize-contrast; /* WebKit (Chrome/Safari) */
       background: transparent;
     }
 
@@ -264,6 +267,7 @@
 
       scrollOffset = (scrollOffset + 1) % placeholder.width;
       ctx.clearRect(0, 0, 512, 512);
+      ctx.imageSmoothingEnabled = false;
 
       // Determine canvas size based on setting
       const useOriginalRes = false;
@@ -287,6 +291,7 @@
       maskCanvas.width = maskCanvas.height = canvasSize;
       const maskCtx = maskCanvas.getContext('2d');
       maskCtx.clearRect(0, 0, canvasSize, canvasSize);
+      ctx.imageSmoothingEnabled = false;
 
       let dx, dy, dw, dh;
       
@@ -354,6 +359,7 @@
       const offset = Math.sin(t * 2) * 6;
 
       gtx.clearRect(0, 0, 512, 512);
+      gtx.imageSmoothingEnabled = false;
       gtx.setTransform(1, 0, 0, 1, offset, offset);
       
       // Center the ghost icon same as the main panel
