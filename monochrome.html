@@ -51,6 +51,7 @@
       cursor: pointer;
       margin: 10px;
       text-align: center;
+      user-select: none;
     }
 
     .custom-file-upload:hover,
@@ -63,7 +64,8 @@
       background-color: #111;
     }
 
-    #thresholdContainer {
+    #thresholdContainer,
+    #invertContainer {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -77,14 +79,16 @@
       height: 8px;
       background: rgba(255, 255, 255, 0.2);
       cursor: pointer;
+      border-radius: 0px;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       appearance: none;
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       background: white;
       border: none;
+      border-radius: 0%;
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -92,6 +96,56 @@
       height: 14px;
       background: white;
       border: none;
+      border-radius: 0%;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #000;
+      border-radius: 0px;
+      transition: 0.4s;
+      border: 2px solid white;
+      box-sizing: border-box;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 20px;
+      top: 50%;
+      left: 3px;
+      transform: translateY(-50%);
+      background-color: white;
+      border-radius: 0%;
+      transition: 0.4s;
+      box-sizing: border-box;
+      border: none;
+    }
+
+    input:checked + .slider {
+      background-color: #fff;
+      border-color: #000;
+    }
+
+    input:checked + .slider:before {
+      background-color: black;
+      transform: translate(20px, -50%);
     }
 
     #info {
@@ -127,10 +181,18 @@
     <span id="thresholdValue">127</span>
   </div>
 
+  <div id="invertContainer">
+    <label for="invertToggle">Invert Colors:</label>
+    <label class="switch">
+      <input type="checkbox" id="invertToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
   <button id="exportButton">Export PNG</button>
 
   <div id="info">
-    <p>Adjust the threshold slider to change how dark/light the monochrome image is.<br>Then export the result as a PNG.</p>
+    <p>Adjust the threshold slider to change how dark/light the monochrome image is.<br>Toggle invert colors on or off.<br>Then export the result as a PNG.</p>
   </div>
     
   <footer>
@@ -144,6 +206,7 @@
     const thresholdSlider = document.getElementById('threshold');
     const thresholdValue = document.getElementById('thresholdValue');
     const exportButton = document.getElementById('exportButton');
+    const invertToggle = document.getElementById('invertToggle');
 
     let originalImage = null;
 
@@ -155,11 +218,15 @@
 
       const imageData = ctx.getImageData(0, 0, 256, 256);
       const data = imageData.data;
+      const invert = invertToggle.checked;
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         const brightness = (r + g + b) / 3;
-        const value = brightness > threshold ? 255 : 0;
+        let value = brightness > threshold ? 255 : 0;
+
+        if (invert) value = 255 - value;
+
         data[i] = data[i + 1] = data[i + 2] = value;
         data[i + 3] = 255;
       }
@@ -197,6 +264,10 @@
       const value = parseInt(thresholdSlider.value);
       thresholdValue.textContent = value;
       applyThreshold(value);
+    });
+
+    invertToggle.addEventListener('change', () => {
+      applyThreshold(parseInt(thresholdSlider.value));
     });
 
     exportButton.addEventListener('click', () => {
