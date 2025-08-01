@@ -359,6 +359,7 @@
       drawPanel();
       tryStartGhost();
     };
+    img.crossOrigin = 'anonymous';
     img.src = URL.createObjectURL(file);
   });
 
@@ -394,6 +395,7 @@
       drawPanel();
       tryStartGhost();
     };
+    defaultImg.crossOrigin = 'anonymous';
     defaultImg.src = 'https://deltaprophecy.vercel.app/assets/heroes.png';
 
     textInput.value = "But lo, on hopes and dreams they send. /n Three heroes at the world's end.";
