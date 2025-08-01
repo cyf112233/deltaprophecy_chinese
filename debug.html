@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeltaProphecy</title>
+  <style>
+    @font-face {
+      font-family: 'ProphecyType';
+      src: url('./assets/PROPHECYTYPE.ttf') format('truetype');
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'DTMSans';
+      src: url('./assets/DTM-Sans.otf') format('opentype');
+      font-display: swap;
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'DTMSans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      background: black;
+    }
+
+    #textContainer {
+      width: 75vw;
+      max-width: 400px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-family: 'ProphecyType', serif;
+      font-size: 32px;
+      line-height: 1;
+      color: transparent;
+      background-size: 256px 256px;
+      -webkit-background-clip: text;
+      background-clip: text;
+      mix-blend-mode: screen;
+      animation: scrollBg 30s linear infinite;
+      background-repeat: repeat;
+    }
+
+    @keyframes scrollBg {
+      0% { background-position: 0 0; }
+      100% { background-position: 512px 512px; }
+    }
+
+    #output {
+      position: relative;
+      width: 90vw;
+      max-width: 512px;
+      aspect-ratio: 2 / 1;
+      max-height: 256px;
+    }
+
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      image-rendering: pixelated;
+      background: transparent;
+    }
+
+    #ghostIcon {
+      z-index: 1;
+      opacity: 0.4;
+      pointer-events: none;
+      top: -50px;
+    }
+
+    #panel {
+      z-index: 2;
+      top: -50px;
+    }
+
+    input[type="file"], input[type="text"] {
+      margin-top: 10px;
+      padding: 5px;
+      width: 75vw;
+      max-width: 512px;
+    }
+
+    .checkbox-container {
+      margin-top: 10px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    #keepOriginalRes {
+      transform: scale(1.2);
+    }
+
+    h1 {
+      margin-top: 15px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      color: #ccc;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      max-width: 512px;
+    }
+
+    .alt-font {
+      font-family: 'ProphecyType', serif;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 125px;
+      max-width: 512px;
+      height: 12px;
+      background: transparent;
+      margin-top: 10px;
+      padding: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+    }
+
+    input[type="range"]::-moz-range-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      margin-top: -4px;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    #directions {
+      max-width: 512px;
+      text-align: center;
+      color: #ccc;
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Deltarune Prophecy Panel Generator</h1>
+  <input type="file" id="imgInput" accept="image/*" />
+  <input type="text" id="textInput" placeholder="Enter prophecy text" />
+  <div class="checkbox-container">
+    <input type="checkbox" id="keepOriginalRes" />
+    <label for="keepOriginalRes">Keep original image resolution</label>
+  </div>
+  <div class="checkbox-container">
+    <label for="imgYOffset">Image Y Offset:</label>
+    <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
+    <span id="imgYOffsetValue">0px</span>
+  </div>
+  <div id="textContainer">Your prophecy here</div>
+  <div id="output">
+    <canvas id="ghostIcon" width="512" height="256"></canvas>
+    <canvas id="panel" width="512" height="256"></canvas>
+  </div>
+  <button id="exportGifBtn" style="margin-top: 10px;">Export 5s GIF</button>
+  <div id="directions">
+    <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use /n to move to a new line.</p>
+  </div>
+  <footer>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
+  </footer>
+
+  <!-- Your original script here (unmodified) -->
+  <script>
+  const imgInput = document.getElementById('imgInput');
+  const textInput = document.getElementById('textInput');
+  const keepOriginalRes = document.getElementById('keepOriginalRes');
+  const panel = document.getElementById('panel');
+  const ghostIcon = document.getElementById('ghostIcon');
+  const ctx = panel.getContext('2d');
+  const gtx = ghostIcon.getContext('2d');
+  const textContainer = document.getElementById('textContainer');
+  const imgYOffset = document.getElementById('imgYOffset');
+
+  let maskImage = null;
+  let resultCanvas = null;
+  let scrollOffset = 0;
+  let ghostStarted = false;
+  let placeholder = null;
+
+  function loadImageFromFile(imagePath) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const tileSize = 256;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = tileSize;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, tileSize, tileSize);
+        resolve(canvas);
+      };
+      img.onerror = (e) => {
+        console.error('Failed to load image from ./assets/depth.png:', e);
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ff0000'; ctx.fillRect(0, 0, 128, 128);
+        ctx.fillStyle = '#00ff00'; ctx.fillRect(128, 0, 128, 128);
+        ctx.fillStyle = '#0000ff'; ctx.fillRect(0, 128, 128, 128);
+        ctx.fillStyle = '#ffff00'; ctx.fillRect(128, 128, 128, 128);
+        resolve(canvas);
+      };
+      img.src = imagePath;
+    });
+  }
+
+  function drawPanel() {
+    if (!maskImage || !placeholder) return;
+
+    scrollOffset = (scrollOffset + 1) % placeholder.width;
+    ctx.clearRect(0, 0, 512, 512);
+
+    const useOriginalRes = keepOriginalRes.checked;
+    const canvasSize = useOriginalRes ? Math.max(maskImage.width, maskImage.height, 256) : 256;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = tempCanvas.height = canvasSize;
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.imageSmoothingEnabled = false;
+
+    const offset = scrollOffset % placeholder.width;
+
+    for (let y = -offset; y < canvasSize + placeholder.height; y += placeholder.height) {
+      for (let x = -offset; x < canvasSize + placeholder.width; x += placeholder.width) {
+        tempCtx.drawImage(placeholder, x, y);
+      }
+    }
+
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = maskCanvas.height = canvasSize;
+    const maskCtx = maskCanvas.getContext('2d');
+    maskCtx.clearRect(0, 0, canvasSize, canvasSize);
+
+    let dx, dy, dw, dh;
+    if (useOriginalRes) {
+      dw = maskImage.width;
+      dh = maskImage.height;
+      dx = (canvasSize - dw) / 2;
+      dy = (canvasSize - dh) / 2;
+    } else {
+      const scale = Math.min(canvasSize / maskImage.width, canvasSize / maskImage.height);
+      dw = maskImage.width * scale;
+      dh = maskImage.height * scale;
+      dx = (canvasSize - dw) / 2;
+      dy = (canvasSize - dh) / 2;
+    }
+
+    maskCtx.drawImage(maskImage, dx, dy, dw, dh);
+
+    const maskData = maskCtx.getImageData(0, 0, canvasSize, canvasSize);
+    const texData = tempCtx.getImageData(0, 0, canvasSize, canvasSize);
+    const result = tempCtx.createImageData(canvasSize, canvasSize);
+
+    for (let i = 0; i < maskData.data.length; i += 4) {
+      const r = maskData.data[i];
+      const g = maskData.data[i + 1];
+      const b = maskData.data[i + 2];
+      const a = maskData.data[i + 3];
+      const brightness = (r + g + b) / 3;
+
+      if (brightness > 200 && a > 0) {
+        result.data[i] = texData.data[i];
+        result.data[i + 1] = texData.data[i + 1];
+        result.data[i + 2] = texData.data[i + 2];
+        result.data[i + 3] = 255;
+      } else {
+        result.data[i + 3] = 0;
+      }
+    }
+
+    resultCanvas = document.createElement('canvas');
+    resultCanvas.width = resultCanvas.height = canvasSize;
+    resultCanvas.getContext('2d').putImageData(result, 0, 0);
+
+    const displayX = (512 - canvasSize) / 2;
+    const displayY = -parseInt(imgYOffset.value, 10);
+    ctx.drawImage(resultCanvas, displayX, displayY);
+  }
+
+  function drawGhostIcon() {
+    if (!resultCanvas) return;
+
+    const t = performance.now() / 1000;
+    const offset = Math.sin(t * 2) * 6;
+
+    gtx.clearRect(0, 0, 512, 512);
+    gtx.setTransform(1, 0, 0, 1, offset, offset);
+
+    const displayX = (512 - resultCanvas.width) / 2;
+    const displayY = -parseInt(imgYOffset.value, 10);
+    gtx.drawImage(resultCanvas, displayX, displayY);
+
+    gtx.setTransform(1, 0, 0, 1, 0, 0);
+
+    requestAnimationFrame(drawGhostIcon);
+  }
+
+  function tryStartGhost() {
+    if (!ghostStarted && resultCanvas) {
+      ghostStarted = true;
+      requestAnimationFrame(drawGhostIcon);
+    }
+  }
+
+  imgInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = () => {
+      maskImage = img;
+      drawPanel();
+      tryStartGhost();
+    };
+    img.src = URL.createObjectURL(file);
+  });
+
+  textInput.addEventListener('input', () => {
+    const formattedText = (textInput.value || 'Your prophecy here').replace(/\/n/g, '<br>');
+    textContainer.innerHTML = formattedText;
+  });
+
+  keepOriginalRes.addEventListener('change', () => {
+    if (maskImage) {
+      drawPanel();
+    }
+  });
+
+  Promise.all([
+    loadImageFromFile('./assets/depth-2.png'),
+    loadImageFromFile('./assets/depth-text.png')
+  ]).then(([tile, textBG]) => {
+    placeholder = tile;
+    textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
+    setInterval(drawPanel, 1000 / 30);
+  });
+
+  imgYOffset.addEventListener('input', () => {
+    imgYOffsetValue.textContent = imgYOffset.value + 'px';
+    if (maskImage) drawPanel();
+  });
+
+  window.addEventListener('load', () => {
+    const defaultImg = new Image();
+    defaultImg.onload = () => {
+      maskImage = defaultImg;
+      drawPanel();
+      tryStartGhost();
+    };
+    defaultImg.src = './assets/heroes.png';
+
+    textInput.value = "But lo, on hopes and dreams they send. /n Three heroes at the world's end.";
+    textInput.dispatchEvent(new Event('input'));
+  });
+</script>
+
+  <!-- GIF.js + Export logic -->
+  <script src="https://unpkg.com/gif.js.optimized/dist/gif.js"></script>
+  <script>
+    document.getElementById('exportGifBtn').addEventListener('click', () => {
+  if (!resultCanvas || !placeholder) {
+    alert("Please wait until the image and texture fully load.");
+    return;
+  }
+
+  const gif = new GIF({
+    workers: 2,
+    quality: 1,
+    width: 512,
+    height: 256,
+    workerScript: 'https://unpkg.com/gif.js.optimized/dist/gif.worker.js'
+  });
+
+  const panel = document.getElementById('panel');
+  const ghost = document.getElementById('ghostIcon');
+  const combined = document.createElement('canvas');
+  combined.width = 512;
+  combined.height = 256;
+  const ctx = combined.getContext('2d');
+
+  let frames = 150; // 5s @ 30fps
+  let count = 0;
+
+  gif.on('finished', blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'prophecy.gif';
+    a.click();
+  });
+
+  // force draw current frame before capture
+  drawPanel();
+  drawGhostIcon();
+
+  setTimeout(() => {
+    function capture() {
+      ctx.clearRect(0, 0, 512, 256);
+      ctx.drawImage(panel, 0, 0);
+      ctx.drawImage(ghost, 0, 0);
+      gif.addFrame(ctx, { copy: true, delay: 1000 / 30 });
+      count++;
+      if (count < frames) requestAnimationFrame(capture);
+      else gif.render();
+    }
+
+    capture();
+  }, 100); // wait a bit for the ghost canvas to draw
+});
+  </script>
+</body>
+</html>
