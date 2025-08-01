@@ -240,6 +240,14 @@
       background-color: #111;
     }
 
+    #sineWrapper {
+      will-change: transform;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
   </style>
 </head>
 <body>
@@ -261,12 +269,14 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
-  <div id="textContainer">Your prophecy here</div>
-  <div id="output">
-    <canvas id="background" width="512" height="256"></canvas>
-    <canvas id="ghostIcon2" width="512" height="256"></canvas>
-    <canvas id="ghostIcon" width="512" height="256"></canvas>
-    <canvas id="panel" width="512" height="256"></canvas>
+  <div id="sineWrapper">
+    <div id="textContainer">Your prophecy here</div>
+    <div id="output">
+      <canvas id="background" width="512" height="256"></canvas>
+      <canvas id="ghostIcon2" width="512" height="256"></canvas>
+      <canvas id="ghostIcon" width="512" height="256"></canvas>
+      <canvas id="panel" width="512" height="256"></canvas>
+    </div>
   </div>
 
   <div id="directions">
@@ -556,6 +566,19 @@
 
       textInput.dispatchEvent(new Event('input'));
     });    
+
+    function animateSineWrapper() {
+      const t = performance.now() / 1000;
+      const offset = Math.sin(t * 1.5) * 4;
+      const sineWrapper = document.getElementById('sineWrapper');
+      if (sineWrapper) {
+        sineWrapper.style.transform = `translateY(${offset}px)`;
+      }
+      requestAnimationFrame(animateSineWrapper);
+    }
+    
+    requestAnimationFrame(animateSineWrapper);
+
   </script>
 </body>
 </html>
