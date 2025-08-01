@@ -44,7 +44,7 @@
       animation: scrollBg 30s linear infinite;
       background-repeat: repeat;
       position: relative;
-      z-index: -1;
+      z-index: 1;
     }
 
     @keyframes scrollBg {
@@ -58,7 +58,6 @@
       max-width: 512px;
       aspect-ratio: 2 / 1;
       max-height: 256px;
-      z-index: -2;  /* Lower than text's z-index: -1 */
     }
 
     canvas {
@@ -77,21 +76,21 @@
     }
 
     #ghostIcon {
-      z-index: 2;
+      z-index: 3;
       opacity: 0.4;
       pointer-events: none;
       top: -50px;
     }
 
     #ghostIcon2 {
-      z-index: 2;
+      z-index: 3;
       opacity: 0.2;
       pointer-events: none;
       top: -50px;
     }
 
     #panel {
-      z-index: 3;
+      z-index: 4;
       top: -50px;
     }
 
@@ -103,7 +102,7 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1; 
+      z-index: 2; 
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       image-rendering: -moz-crisp-edges;
@@ -254,6 +253,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      z-index: 0;
     }
 
     select#styleSelect {
@@ -313,8 +314,9 @@
     </div>
   </div>
   <div id="sineWrapper">
-    <div id="textContainer">Your prophecy here</div>
+    
     <div id="output">
+      <div id="textContainer">Your prophecy here</div>
       <canvas id="background" width="512" height="256"></canvas>
       <canvas id="ghostIcon2" width="512" height="256"></canvas>
       <canvas id="ghostIcon" width="512" height="256"></canvas>
