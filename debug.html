@@ -249,6 +249,14 @@
       align-items: center;
     }
 
+    .dropdown-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 125px;
+      max-width: 512px;
+      margin-top: 10px;
+    }
+    
     select#styleSelect {
       font-family: 'DTMSans', sans-serif;
       background-color: black;
@@ -260,21 +268,29 @@
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
+      width: 100%;
       text-align: center;
-      margin-top: 10px;
-      width: 125px;
-      max-width: 512px;
+      text-align-last: center;
     }
     
     select#styleSelect:hover {
       background-color: #222;
-      border-color: #fff;
     }
     
     select#styleSelect:focus {
       outline: none;
       border-color: #fff;
       box-shadow: 0 0 5px white;
+    }
+    
+    .dropdown-arrow {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: white;
+      font-size: 14px;
     }
 
   </style>
@@ -284,12 +300,12 @@
   <input type="file" id="imgInput" accept="image/*" style="display:none;" />
   <label for="imgInput" class="custom-file-upload">Upload Image</label>
   <input type="text" id="textInput" placeholder="Enter prophecy text" />
-  <div style="margin-top: 10px;">
-    <label for="styleSelect">Style:</label>
-      <select id="styleSelect">
-        <option value="default">None</option>
-        <option value="susie">Susie's Dark World</option>
+  <div class="dropdown-wrapper">
+    <select id="styleSelect">
+      <option value="default">Default Style</option>
+      <option value="susie">Susie's Dark World</option>
     </select>
+    <span class="dropdown-arrow">▼</span>
   </div>
   <div style="display: flex; justify-content: center; width: 100%;">
     <div class="checkbox-container">
