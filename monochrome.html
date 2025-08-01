@@ -29,11 +29,11 @@
 
     canvas {
       margin-top: 20px;
-      width: 256px;
-      height: 256px;
       image-rendering: pixelated;
       background: #000;
       border: 2px solid white;
+      max-width: 90vw;
+      max-height: 90vh;
     }
 
     input[type="file"] {
@@ -173,7 +173,7 @@
   <input type="file" id="fileInput" accept="image/*" />
   <label for="fileInput" class="custom-file-upload">Upload Image</label>
 
-  <canvas id="preview" width="256" height="256"></canvas>
+  <canvas id="preview"></canvas>
 
   <div id="thresholdContainer">
     <label for="threshold">Threshold:</label>
@@ -213,10 +213,13 @@
     function applyThreshold(threshold) {
       if (!originalImage) return;
 
-      ctx.clearRect(0, 0, 256, 256);
-      ctx.drawImage(originalImage, 0, 0, 256, 256);
+      const width = canvas.width;
+      const height = canvas.height;
 
-      const imageData = ctx.getImageData(0, 0, 256, 256);
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(originalImage, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, width, height);
       const data = imageData.data;
       const invert = invertToggle.checked;
 
@@ -242,14 +245,14 @@
       img.onload = function () {
         canvas.width = img.width;
         canvas.height = img.height;
-        
+
         originalImage = document.createElement('canvas');
         originalImage.width = img.width;
         originalImage.height = img.height;
-        
+
         const tempCtx = originalImage.getContext('2d');
         tempCtx.drawImage(img, 0, 0);
-        
+
         applyThreshold(parseInt(thresholdSlider.value));
       };
 
