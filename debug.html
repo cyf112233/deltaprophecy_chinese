@@ -245,7 +245,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;  /* centers children horizontally */
+      align-items: center;
     }
 
   </style>
@@ -569,7 +569,7 @@
 
     function animateSineWrapper() {
       const t = performance.now() / 1000;
-      const offset = Math.sin(t * 1.5) * 4; // slower/different than ghosts
+      const offset = Math.sin(t * 1.5) * 4;
       const sineWrapper = document.getElementById('sineWrapper');
       if (sineWrapper) {
         sineWrapper.style.transform = `translateY(${offset}px)`;
