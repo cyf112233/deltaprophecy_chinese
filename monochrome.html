@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monochrome Tool</title>
+  <style>
+    @font-face {
+      font-family: 'DTMSans';
+      src: url('./assets/DTM-Sans.otf') format('opentype');
+      font-display: swap;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'DTMSans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: black;
+      color: white;
+    }
+
+    h1 {
+      margin: 20px;
+      text-align: center;
+    }
+
+    canvas {
+      margin-top: 20px;
+      width: 256px;
+      height: 256px;
+      image-rendering: pixelated;
+      background: #000;
+      border: 2px solid white;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload,
+    #exportButton {
+      display: inline-block;
+      font-family: 'DTMSans', sans-serif;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin: 10px;
+      text-align: center;
+    }
+
+    .custom-file-upload:hover,
+    #exportButton:hover {
+      background-color: #222;
+    }
+
+    .custom-file-upload:active,
+    #exportButton:active {
+      background-color: #111;
+    }
+
+    #thresholdContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    input[type="range"] {
+      appearance: none;
+      width: 150px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: none;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: none;
+    }
+
+    #info {
+      max-width: 512px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #fff;
+    }
+    
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      max-width: 512px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Monochrome Image Tool</h1>
+
+  <input type="file" id="fileInput" accept="image/*" />
+  <label for="fileInput" class="custom-file-upload">Upload Image</label>
+
+  <canvas id="preview" width="256" height="256"></canvas>
+
+  <div id="thresholdContainer">
+    <label for="threshold">Threshold:</label>
+    <input type="range" id="threshold" min="0" max="255" value="127" />
+    <span id="thresholdValue">127</span>
+  </div>
+
+  <button id="exportButton">Export PNG</button>
+
+  <div id="info">
+    <p>Adjust the threshold slider to change how dark/light the monochrome image is.<br>Then export the result as a PNG.</p>
+  </div>
+    
+  <footer>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - Determination Sans by Haley Wakamatsu</p>
+  </footer>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const canvas = document.getElementById('preview');
+    const ctx = canvas.getContext('2d');
+    const thresholdSlider = document.getElementById('threshold');
+    const thresholdValue = document.getElementById('thresholdValue');
+    const exportButton = document.getElementById('exportButton');
+
+    let originalImage = null;
+
+    function applyThreshold(threshold) {
+      if (!originalImage) return;
+
+      ctx.clearRect(0, 0, 256, 256);
+      ctx.drawImage(originalImage, 0, 0, 256, 256);
+
+      const imageData = ctx.getImageData(0, 0, 256, 256);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        const value = brightness > threshold ? 255 : 0;
+        data[i] = data[i + 1] = data[i + 2] = value;
+        data[i + 3] = 255;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    fileInput.addEventListener('change', function () {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const img = new Image();
+      img.onload = function () {
+        const scale = 256 / Math.max(img.width, img.height);
+        const newW = img.width * scale;
+        const newH = img.height * scale;
+
+        originalImage = document.createElement('canvas');
+        originalImage.width = 256;
+        originalImage.height = 256;
+        const tempCtx = originalImage.getContext('2d');
+        tempCtx.fillStyle = '#000';
+        tempCtx.fillRect(0, 0, 256, 256);
+        tempCtx.drawImage(img, (256 - newW) / 2, (256 - newH) / 2, newW, newH);
+
+        applyThreshold(parseInt(thresholdSlider.value));
+      };
+
+      const reader = new FileReader();
+      reader.onload = e => img.src = e.target.result;
+      reader.readAsDataURL(file);
+    });
+
+    thresholdSlider.addEventListener('input', () => {
+      const value = parseInt(thresholdSlider.value);
+      thresholdValue.textContent = value;
+      applyThreshold(value);
+    });
+
+    exportButton.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'monochrome.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
