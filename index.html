@@ -262,8 +262,7 @@
   </div>
 
   <div id="directions">
-  <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use 
- to move to a new line.<br><br>I couldn't find a way to get GIF exports to work, so you kinda just have to take a screenshot.<br><br>If your image isn't monochrome, you can make it so <a href="https://deltaprophecy.vercel.app/monochrome.html" target="_blank" rel="noopener noreferrer">here</a>.
+  <p>Upload a white-only or black-and-white image above to begin. Type your prophecy text in the box. You can use \n to move to a new line.<br><br>I couldn't find a way to get GIF exports to work, so you kinda just have to take a screenshot.<br><br>If your image isn't monochrome, you can make it so <a href="https://deltaprophecy.vercel.app/monochrome.html" target="_blank" rel="noopener noreferrer">here</a>.
 </p>
   </div>
   <footer>
@@ -506,8 +505,7 @@
     });
 
     textInput.addEventListener('input', () => {
-      const formattedText = (textInput.value || 'Your prophecy here').replace(/\
-/g, '<br>');
+      const formattedText = (textInput.value || 'Your prophecy here').replace(/\\n/g, '<br>');
       textContainer.innerHTML = formattedText;
     });
 
@@ -547,8 +545,7 @@
       };
       defaultImg.src = './assets/heroes.png';
 
-      textInput.value = "But lo, on hopes and dreams they send. 
- Three heroes at the world's end.";
+      textInput.value = "But lo, on hopes and dreams they send. \n Three heroes at the world's end.";
 
       textInput.dispatchEvent(new Event('input'));
     });    
