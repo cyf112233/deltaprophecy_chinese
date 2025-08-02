@@ -29,7 +29,7 @@
 
     #textContainer {
       width: 75vw;
-      max-width: 350px;
+      max-width: 425px;
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
@@ -305,10 +305,11 @@
   <div style="display: flex; justify-content: center; width: 100%;">
     <div class="checkbox-container">
       <label for="imgYOffset">Image Y Offset:</label>
-      <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
+      <input type="range" id="imgYOffset" min="-100" max="100" value="0" />
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+  <div style="height: 30px;"></div>
   <div id="sineWrapper">
     <div id="textContainer">Your prophecy here</div>
     <div id="output">
@@ -340,6 +341,7 @@
     const imgScaleValue = document.getElementById('imgScaleValue');
     const backgroundCanvas = document.getElementById('background');
     const bgCtx = backgroundCanvas.getContext('2d');
+    const styleSelect = document.getElementById('styleSelect');
 
     let maskImage = null;
     let resultCanvas = null;
@@ -348,6 +350,121 @@
     let placeholder = null;
     let backgroundTile = null;
     let backgroundScrollOffset = 0;
+
+    // Define all available panels with their preset text and style
+    const panelPresets = {
+      'roots': {
+        text: 'Roots',
+        style: 'default',
+        yOffset: 38
+      },
+      'gallery': {
+        text: 'Gallery',
+        style: 'default',
+        yOffset: 20
+      },
+      'initial-1': {
+        text: 'The prophecy, which whispers \\n among the shadows.',
+        style: 'default',
+        yOffset: 16
+      },
+      'initial-2': {
+        text: 'The legend of this world. \\n < Deltarune. >',
+        style: 'default',
+        yOffset: 52
+      },
+      'main-1': {
+        text: 'A world basked in purest light. \\n Beneath it grew eternal night.',
+        style: 'default'
+      },
+      'main-2': {
+        text: 'If fountains freed, the roaring cries. \\n And titans shape from darkened eyes.',
+        style: 'default',
+        yOffset: 20
+      },
+      'main-3': {
+        text: 'The light and dark, both burning dire. \\n A countdown to the earth\'s expire.',
+        style: 'default',
+        yOffset: 32
+      },
+      'heroes-1': {
+        text: 'But lo, on hopes and dreams they send. \\n Three heroes at the world\'s end.',
+        style: 'default'
+      },
+      'heroes-4': {
+        text: 'The first hero. \\n The cage, with human soul and parts.',
+        style: 'susie',
+        yOffset: 36
+      },
+      'heroes-2': {
+        text: 'The second hero. \\n The girl, with hope crossed on her heart.',
+        style: 'susie',
+        yOffset: 25
+      },
+      'heroes-3': {
+        text: 'The third hero. \\n The prince, alone in deepest dark.',
+        style: 'susie',
+        yOffset: 54
+      },
+      'rude-buster': {
+        text: 'And last, was the girl. \\n At last, was the girl.',
+        style: 'susie'
+      },
+      'joke-1': {
+        text: 'Jockington grows the beard.',
+        style: 'default'
+      },
+      'joke-2': {
+        text: 'The pointy-headed will say \\n "Toothpaste," and then "Boy."',
+        style: 'default',
+        yOffset: 45
+      },
+      'boss-1': {
+        text: 'The queen\'s chariot \\n cannot be stopped.',
+        style: 'default',
+        yOffset: 65
+      },
+      'boss-2': {
+        text: 'Cleaved red by blade.',
+        style: 'susie',
+        yOffset: 42
+      },
+      'boss-3': {
+        text: 'The flower man, \\n trapped in asylum.',
+        style: 'default',
+        yOffset: 22
+      },
+      'knight': {
+        text: 'The knight which makes \\n with blackened knife.',
+        style: 'default',
+        yOffset: 20
+      },
+      'heaven-hell-1': {
+        text: 'They\'ll hear the ring of heaven\'s call.',
+        style: 'default',
+        yOffset: 20
+      },
+      'heaven-hell-2': {
+        text: 'They\'ll see the tail of hell take crawl.',
+        style: 'default',
+        yOffset: 32
+      },
+      'end': {
+        text: 'The final tragedy unveils.',
+        style: 'default',
+        yOffset: 55
+      },
+      'hammer': {
+        text: 'Axe carved by the \\n tortoise\'s grand hammer.',
+        style: 'default',
+      }
+    };
+
+    function getRandomPanel() {
+      const panelNames = Object.keys(panelPresets);
+      const randomIndex = Math.floor(Math.random() * panelNames.length);
+      return panelNames[randomIndex];
+    }
 
     function loadImageFromFile(imagePath) {
       return new Promise(resolve => {
@@ -566,8 +683,6 @@
       textContainer.innerHTML = formattedText;
     });
 
-    const styleSelect = document.getElementById('styleSelect');
-
     function getAssetPath(name) {
       const style = styleSelect.value;
       const suffix = style === 'susie' ? '-susie' : '';
@@ -609,17 +724,46 @@
     });
 
     window.addEventListener('load', () => {
+      // Get random panel
+      const randomPanelName = getRandomPanel();
+      const randomPanel = panelPresets[randomPanelName];
+      
+      console.log(`Loading random panel: ${randomPanelName}`);
+      
+      // Set the style first
+      styleSelect.value = randomPanel.style;
+      document.body.classList.toggle('susie-theme', randomPanel.style === 'susie');
+      
+      // Set the text
+      textInput.value = randomPanel.text;
+      const formattedText = randomPanel.text.replace(/\\n/g, '<br>');
+      textContainer.innerHTML = formattedText;
+      
+      // Load the corresponding image
       const defaultImg = new Image();
       defaultImg.onload = () => {
         maskImage = defaultImg;
+        // Reload assets with the correct style, then draw
+        reloadAssetsAndRedraw();
         drawPanel();
         tryStartGhost();
       };
-      defaultImg.src = './assets/base-panels/heroes-1.png';
+      defaultImg.onerror = () => {
+        console.error(`Failed to load image: ./assets/base-panels/${randomPanelName}.png`);
+        // Fallback to heroes-1 if the random image fails
+        defaultImg.src = './assets/base-panels/heroes-1.png';
+      };
+      defaultImg.src = `./assets/base-panels/${randomPanelName}.png`;
 
-      textInput.value = "But lo, on hopes and dreams they send. \\n Three heroes at the world's end.";
-
-      textInput.dispatchEvent(new Event('input'));
+      // Set the Y offset if specified
+      if (randomPanel.yOffset !== undefined) {
+        imgYOffset.value = randomPanel.yOffset;
+        document.getElementById('imgYOffsetValue').textContent = randomPanel.yOffset + 'px';
+      } else {
+        // Reset to default if no custom offset
+        imgYOffset.value = 0;
+        document.getElementById('imgYOffsetValue').textContent = '0px';
+      }
     });    
 
     function animateSineWrapper() {
