@@ -29,7 +29,7 @@
 
     #textContainer {
       width: 75vw;
-      max-width: 425px;
+      max-width: 350px;
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
@@ -43,8 +43,6 @@
       mix-blend-mode: screen;
       animation: scrollBg 30s linear infinite;
       background-repeat: repeat;
-      position: relative;
-      z-index: 1;
     }
 
     @keyframes scrollBg {
@@ -76,21 +74,21 @@
     }
 
     #ghostIcon {
-      z-index: 3;
+      z-index: 1;
       opacity: 0.4;
       pointer-events: none;
       top: -50px;
     }
 
     #ghostIcon2 {
-      z-index: 3;
+      z-index: 1;
       opacity: 0.2;
       pointer-events: none;
       top: -50px;
     }
 
     #panel {
-      z-index: 4;
+      z-index: 2;
       top: -50px;
     }
 
@@ -102,7 +100,7 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 2; 
+      z-index: 0; 
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       image-rendering: -moz-crisp-edges;
@@ -253,8 +251,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      z-index: 0;
     }
 
     select#styleSelect {
@@ -309,14 +305,13 @@
   <div style="display: flex; justify-content: center; width: 100%;">
     <div class="checkbox-container">
       <label for="imgYOffset">Image Y Offset:</label>
-      <input type="range" id="imgYOffset" min="-100" max="100" value="0" />
+      <input type="range" id="imgYOffset" min="-55" max="55" value="0" />
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
-  
-  <div id="sineWrapper">    
+  <div id="sineWrapper">
+    <div id="textContainer">Your prophecy here</div>
     <div id="output">
-      <div id="textContainer">Your prophecy here</div>
       <canvas id="background" width="512" height="256"></canvas>
       <canvas id="ghostIcon2" width="512" height="256"></canvas>
       <canvas id="ghostIcon" width="512" height="256"></canvas>
@@ -389,15 +384,15 @@
         text: 'But lo, on hopes and dreams they send. \\n Three heroes at the world\'s end.',
         style: 'default'
       },
-      'heroes-4': {
+      'heroes-2': {
         text: 'The first hero. \\n The cage, with human soul and parts.',
         style: 'susie'
       },
-      'heroes-2': {
+      'heroes-3': {
         text: 'The second hero. \\n The girl, with hope crossed on her heart.',
         style: 'susie'
       },
-      'heroes-3': {
+      'heroes-4': {
         text: 'The third hero. \\n The prince, alone in deepest dark.',
         style: 'susie'
       },
