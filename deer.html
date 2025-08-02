@@ -390,15 +390,6 @@
       img.src = imagePath;
     }
 
-    // Initialize animations
-    setInterval(() => {
-      drawPanel();
-      drawBackground();
-    }, 1000 / 30);
-
-    // Start ghost animation immediately
-    requestAnimationFrame(drawGhostIcon);
-
     function getAssetPath(name) {
       const suffix = currentStyle === 'susie' ? '-susie' : '';
       return `./assets/depth/${name}${suffix}.png`;
@@ -418,6 +409,15 @@
         document.body.classList.toggle('susie-theme', currentStyle === 'susie');
       });
     }
+
+    // Initialize animations
+    setInterval(() => {
+      drawPanel();
+      drawBackground();
+    }, 1000 / 30);
+
+    // Start ghost animation
+    requestAnimationFrame(drawGhostIcon);
 
     function animateSineWrapper() {
       const t = performance.now() / 1000;
