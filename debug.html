@@ -617,49 +617,51 @@
 
     function drawBackground() {
       if (!backgroundTile) return;
-    
+
       backgroundScrollOffset = (backgroundScrollOffset + 0.5) % backgroundTile.width;
       bgCtx.clearRect(0, 0, 512, 256);
       bgCtx.imageSmoothingEnabled = false;
-    
-      const scale = parseFloat(imgScale.value); // Get the scale value
+
+      const scale = parseFloat(imgScale.value);
+      const yOffset = -parseInt(imgYOffset.value, 10);
+      
+      // Scale the background tile size
       const scaledTileWidth = backgroundTile.width * scale;
       const scaledTileHeight = backgroundTile.height * scale;
       
       const offset = (backgroundScrollOffset * scale) % scaledTileWidth;
-      const yOffset = -parseInt(imgYOffset.value, 10); 
-    
-      // Draw the scaled background tiles
+
+      // Draw scaled background tiles
       for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
         for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
           bgCtx.drawImage(backgroundTile, x, y, scaledTileWidth, scaledTileHeight);
         }
       }
-    
+
       const canvasSize = 256; 
       const scaledW = canvasSize * scale;
       const scaledH = canvasSize * scale;
       const imageX = (512 - scaledW) / 2; 
       const imageY = 64 + yOffset; 
-    
-      // Scale the radial gradient mask as well
+
+      // Scale the gradient radii based on the scale factor
       const radiusX = 160 * scale; 
       const radiusY = 100 * scale;  
-    
+
       bgCtx.save();
-    
+
       bgCtx.translate(imageX + scaledW/2, imageY);
       bgCtx.scale(radiusX / radiusY, 1); 
       bgCtx.translate(-(imageX + scaledW/2), -imageY);
-    
+
       const gradient = bgCtx.createRadialGradient(imageX + scaledW/2, imageY, 0, imageX + scaledW/2, imageY, radiusY);
       gradient.addColorStop(0, 'rgba(0,0,0,0)'); 
       gradient.addColorStop(0.6, 'rgba(0,0,0,0)'); 
       gradient.addColorStop(1, 'rgba(0,0,0,1)');   
-    
+
       bgCtx.fillStyle = gradient;
       bgCtx.fillRect(0, 0, 512, 256); 
-    
+
       bgCtx.restore();
     }
 
@@ -725,7 +727,10 @@
 
     imgScale.addEventListener('input', () => {
       imgScaleValue.textContent = parseFloat(imgScale.value).toFixed(2) + '×';
-      if (maskImage) drawPanel();
+      if (maskImage) {
+        drawPanel();
+        drawBackground();
+      }
     });
 
     window.addEventListener('load', () => {
@@ -787,4 +792,3 @@
   </script>
 </body>
 </html>
-
