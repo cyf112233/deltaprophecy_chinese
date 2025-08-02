@@ -309,6 +309,7 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+  <div style="height: 30px;"></div>
   <div id="sineWrapper">
     <div id="textContainer">Your prophecy here</div>
     <div id="output">
@@ -732,6 +733,16 @@
         defaultImg.src = './assets/base-panels/heroes-1.png';
       };
       defaultImg.src = `./assets/base-panels/${randomPanelName}.png`;
+
+      // Set the Y offset if specified
+      if (randomPanel.yOffset !== undefined) {
+        imgYOffset.value = randomPanel.yOffset;
+        document.getElementById('imgYOffsetValue').textContent = randomPanel.yOffset + 'px';
+      } else {
+        // Reset to default if no custom offset
+        imgYOffset.value = 0;
+        document.getElementById('imgYOffsetValue').textContent = '0px';
+      }
     });    
 
     function animateSineWrapper() {
