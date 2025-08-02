@@ -25,8 +25,6 @@
       align-items: center;
       color: white;
       background: black;
-      height: 100vh;
-      justify-content: center;
     }
 
     #textContainer {
@@ -115,17 +113,13 @@
     }
 
     footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      margin-top: 20px;
       padding: 10px;
       color: #fff;
       font-size: 14px;
       text-align: center;
       width: 100%;
       max-width: 512px;
-      margin: 0 auto;
     }
 
     .alt-font {
@@ -172,9 +166,8 @@
     let placeholder = null;
     let backgroundTile = null;
     let backgroundScrollOffset = 0;
-    let imgScale = 1;
-    let imgYOffset = 0;
-    let currentStyle = 'default';
+    let currentScale = 1;
+    let currentYOffset = 0;
 
     function loadImageFromFile(imagePath) {
       return new Promise(resolve => {
@@ -280,10 +273,10 @@
       resultCanvas.width = resultCanvas.height = canvasSize;
       resultCanvas.getContext('2d').putImageData(result, 0, 0);
 
-      const scaledW = resultCanvas.width * imgScale;
-      const scaledH = resultCanvas.height * imgScale;
+      const scaledW = resultCanvas.width * currentScale;
+      const scaledH = resultCanvas.height * currentScale;
       const scaledX = (512 - scaledW) / 2;
-      const scaledY = (256 - scaledH) / 2 - imgYOffset;
+      const scaledY = (256 - scaledH) / 2 - currentYOffset;
 
       ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
     }
@@ -299,10 +292,10 @@
       gtx.imageSmoothingEnabled = false;
       gtx.setTransform(1, 0, 0, 1, offset1, offset1);
 
-      const scaledW = resultCanvas.width * imgScale;
-      const scaledH = resultCanvas.height * imgScale;
+      const scaledW = resultCanvas.width * currentScale;
+      const scaledH = resultCanvas.height * currentScale;
       const scaledX = (512 - scaledW) / 2;
-      const scaledY = (256 - scaledH) / 2 - imgYOffset;
+      const scaledY = (256 - scaledH) / 2 - currentYOffset;
 
       gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx.setTransform(1, 0, 0, 1, 0, 0);
@@ -324,12 +317,12 @@
       bgCtx.clearRect(0, 0, 512, 256);
       bgCtx.imageSmoothingEnabled = false;
 
-      const yOffset = -imgYOffset;
+      const yOffset = -currentYOffset;
       
-      const scaledTileWidth = backgroundTile.width * imgScale;
-      const scaledTileHeight = backgroundTile.height * imgScale;
+      const scaledTileWidth = backgroundTile.width * currentScale;
+      const scaledTileHeight = backgroundTile.height * currentScale;
       
-      const offset = (backgroundScrollOffset * imgScale) % scaledTileWidth;
+      const offset = (backgroundScrollOffset * currentScale) % scaledTileWidth;
 
       for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
         for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
@@ -338,13 +331,13 @@
       }
 
       const canvasSize = 256; 
-      const scaledW = canvasSize * imgScale;
-      const scaledH = canvasSize * imgScale;
+      const scaledW = canvasSize * currentScale;
+      const scaledH = canvasSize * currentScale;
       const imageX = (512 - scaledW) / 2; 
       const imageY = 64 + yOffset; 
 
-      const radiusX = 160 * imgScale; 
-      const radiusY = 100 * imgScale;  
+      const radiusX = 160 * currentScale; 
+      const radiusY = 100 * currentScale;  
 
       bgCtx.save();
 
@@ -363,61 +356,70 @@
       bgCtx.restore();
     }
 
+    function tryStartGhost() {
+      if (!ghostStarted && resultCanvas) {
+        ghostStarted = true;
+        requestAnimationFrame(drawGhostIcon);
+      }
+    }
+
+    function getAssetPath(name, style) {
+      const suffix = style === 'susie' ? '-susie' : '';
+      return `./assets/depth/${name}${suffix}.png`;
+    }
+    
+    function loadAssets(style) {
+      return Promise.all([
+        loadImageFromFile(getAssetPath('depth-blue', style)), 
+        loadImageFromFile(getAssetPath('depth-text', style)),
+        loadImageFromFile(getAssetPath('depth-darker-new', style))
+      ]);
+    }
+
     // Main function to set up a panel
     function setPanel(text, imagePath, style = 'default', scale = 1, yOffset = 0) {
-      // Set style
-      currentStyle = style;
-      document.body.classList.toggle('susie-theme', style === 'susie');
+      currentScale = scale;
+      currentYOffset = yOffset;
       
       // Set text
       const formattedText = text.replace(/\\n/g, '<br>');
       textContainer.innerHTML = formattedText;
       
-      // Set scale and offset
-      imgScale = scale;
-      imgYOffset = yOffset;
+      // Set theme
+      document.body.classList.toggle('susie-theme', style === 'susie');
       
-      // Load image
-      const img = new Image();
-      img.onload = () => {
-        maskImage = img;
-        reloadAssetsAndRedraw();
-        drawPanel();
-      };
-      img.onerror = () => {
-        console.error(`Failed to load image: ${imagePath}`);
-      };
-      img.src = imagePath;
-    }
-
-    function getAssetPath(name) {
-      const suffix = currentStyle === 'susie' ? '-susie' : '';
-      return `./assets/depth/${name}${suffix}.png`;
-    }
-    
-    function reloadAssetsAndRedraw() {
-      Promise.all([
-        loadImageFromFile(getAssetPath('depth-blue')), 
-        loadImageFromFile(getAssetPath('depth-text')),
-        loadImageFromFile(getAssetPath('depth-darker-new'))
-      ]).then(([tile, textBG, bgTile]) => {
+      // Load assets and image
+      loadAssets(style).then(([tile, textBG, bgTile]) => {
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
-        if (maskImage) drawPanel();
-        drawBackground();
-        document.body.classList.toggle('susie-theme', currentStyle === 'susie');
+        
+        // Load the panel image
+        const img = new Image();
+        img.onload = () => {
+          maskImage = img;
+          drawPanel();
+          drawBackground();
+          tryStartGhost();
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${imagePath}`);
+        };
+        
+        if (imagePath.startsWith('data:') || imagePath.startsWith('http') || imagePath.startsWith('./')) {
+          img.src = imagePath;
+        } else {
+          // Assume it's a base64 or blob URL
+          img.src = imagePath;
+        }
       });
     }
 
-    // Initialize animations
+    // Animation loops
     setInterval(() => {
       drawPanel();
       drawBackground();
     }, 1000 / 30);
-
-    // Start ghost animation
-    requestAnimationFrame(drawGhostIcon);
 
     function animateSineWrapper() {
       const t = performance.now() / 1000;
@@ -434,16 +436,13 @@
     // Example usage on page load
     window.addEventListener('load', () => {
       setPanel(
-        'The legend of this world. \\n < Deltarune. >',
-        './assets/base-panels/initial-2.png',
-        'default',
-        1,
+        'The legend of this world. \\n < Deltarune. >', 
+        './assets/base-panels/initial-2.png', 
+        'default', 
+        1.0, 
         52
       );
     });
-
-    // Make setPanel globally available
-    window.setPanel = setPanel;
   </script>
 </body>
 </html>
