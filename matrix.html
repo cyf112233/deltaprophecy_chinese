@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RGB Matrix Color Applier Thingy</title>
+  <style>
+    @font-face {
+      font-family: 'DTMSans';
+      src: url('./assets/fonts/DTM-Sans.otf') format('opentype');
+      font-display: swap;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'DTMSans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: black;
+      color: white;
+    }
+
+    h1 {
+      margin: 20px;
+      text-align: center;
+    }
+
+    canvas {
+      margin-top: 20px;
+      image-rendering: pixelated;
+      background: #000;
+      border: 2px solid white;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload,
+    #exportButton {
+      display: inline-block;
+      font-family: 'DTMSans', sans-serif;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 6px 12px;
+      cursor: pointer;
+      margin: 10px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .custom-file-upload:hover,
+    #exportButton:hover {
+      background-color: #222;
+    }
+
+    .custom-file-upload:active,
+    #exportButton:active {
+      background-color: #111;
+    }
+
+    textarea {
+      font-family: 'DTMSans', sans-serif;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 5px 10px;
+      outline: none;
+      border-radius: 0px;
+      width: 75vw;
+      max-width: 512px;
+      box-sizing: border-box;
+      margin: 10px 0;
+      resize: vertical;
+      min-height: 5em;
+      line-height: 1.4em;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #fff;
+      box-shadow: 0 0 5px white;
+    }
+
+    #info {
+      max-width: 512px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #fff;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      max-width: 512px;
+    }
+  </style>
+</head>
+<body>
+  <h1>RGB Matrix Color Applier Thingy</h1>
+  <input type="file" id="upload" accept="image/*">
+  <label for="upload" class="custom-file-upload">Upload Image</label>
+  <textarea id="matrixInput">C = [R′ G′ B′] = [0.1754 0.3853 0.2538; 0.3181 0.7731 -0.0975; 0.2266 0.4869 0.4119] × [R G B]</textarea>
+  <canvas id="canvas"></canvas>
+  <button id="exportButton">Export PNG</button>
+  <div id="info">
+    <p>Paste a 3×3 matrix expression like the starter one. Then, export the edited image.</p>
+  </div>
+  <footer>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - Determination Sans by Haley Wakamatsu</p>
+  </footer>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const matrixInput = document.getElementById('matrixInput');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const exportButton = document.getElementById('exportButton');
+    let originalImage = null;
+
+    upload.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        originalImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        applyMatrix();
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    matrixInput.addEventListener('input', () => {
+      applyMatrix();
+    });
+
+    function applyMatrix() {
+      if (!originalImage) return;
+
+      const input = matrixInput.value;
+      const matrix = extractMatrix(input);
+      if (!matrix) return;
+
+      const data = new Uint8ClampedArray(originalImage.data);
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        const r2 = matrix[0][0]*r + matrix[0][1]*g + matrix[0][2]*b;
+        const g2 = matrix[1][0]*r + matrix[1][1]*g + matrix[1][2]*b;
+        const b2 = matrix[2][0]*r + matrix[2][1]*g + matrix[2][2]*b;
+
+        data[i]     = Math.min(255, Math.max(0, r2));
+        data[i + 1] = Math.min(255, Math.max(0, g2));
+        data[i + 2] = Math.min(255, Math.max(0, b2));
+      }
+
+      ctx.putImageData(new ImageData(data, canvas.width, canvas.height), 0, 0);
+    }
+
+    function extractMatrix(str) {
+      const matches = [...str.matchAll(/\[(.*?)\]/gs)];
+      if (matches.length < 2) return null;
+      const matrixStr = matches[1][1];
+      const rows = matrixStr.split(';').map(row =>
+        row.trim().split(/[ ,]+/).map(Number)
+      );
+
+      if (
+        rows.length !== 3 ||
+        rows.some(row => row.length !== 3 || row.some(isNaN))
+      ) {
+        return null;
+      }
+      return rows;
+    }
+
+    exportButton.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'filtered.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
+</body>
+</html>
