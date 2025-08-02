@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeltaProphecy</title>
+  <style>
+    @font-face {
+      font-family: 'ProphecyType';
+      src: url('./assets/fonts/PROPHECYTYPE.ttf') format('truetype');
+      font-display: swap;
+    }
+    
+    @font-face {
+      font-family: 'DTMSans';
+      src: url('./assets/fonts/DTM-Sans.otf') format('opentype');
+      font-display: swap;
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'DTMSans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      background: black;
+      height: 100vh;
+      justify-content: center;
+    }
+
+    #textContainer {
+      width: 75vw;
+      max-width: 425px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-family: 'ProphecyType', serif;
+      font-size: 32px;
+      line-height: 1;
+      color: transparent;
+      background-size: 256px 256px;
+      -webkit-background-clip: text;
+      background-clip: text;
+      mix-blend-mode: screen;
+      animation: scrollBg 30s linear infinite;
+      background-repeat: repeat;
+    }
+
+    @keyframes scrollBg {
+      0% { background-position: 0 0; }
+      100% { background-position: 512px 512px; }
+    }
+
+    #output {
+      position: relative;
+      width: 90vw;
+      max-width: 512px;
+      aspect-ratio: 2 / 1;
+      max-height: 256px;
+    }
+
+    canvas {
+      position: absolute;
+      width: 90vw;
+      max-width: 512px;
+      height: auto;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      background: transparent;
+    }
+
+    #ghostIcon {
+      z-index: 1;
+      opacity: 0.4;
+      pointer-events: none;
+      top: -50px;
+    }
+
+    #ghostIcon2 {
+      z-index: 1;
+      opacity: 0.2;
+      pointer-events: none;
+      top: -50px;
+    }
+
+    #panel {
+      z-index: 2;
+      top: -50px;
+    }
+
+    #background {
+      position: absolute;
+      width: 90vw;
+      max-width: 512px;
+      height: auto;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 0; 
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      opacity: 0.5;
+    }
+
+    body.susie-theme #background {
+      opacity: 0.5;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      max-width: 512px;
+      margin: 0 auto;
+    }
+
+    .alt-font {
+      font-family: 'ProphecyType', serif;
+    }
+
+    #sineWrapper {
+      will-change: transform;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="sineWrapper">
+    <div id="textContainer">Your prophecy here</div>
+    <div id="output">
+      <canvas id="background" width="512" height="256"></canvas>
+      <canvas id="ghostIcon2" width="512" height="256"></canvas>
+      <canvas id="ghostIcon" width="512" height="256"></canvas>
+      <canvas id="panel" width="512" height="256"></canvas>
+    </div>
+  </div>
+
+  <footer>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
+  </footer>
+
+  <script>
+    const panel = document.getElementById('panel');
+    const ghostIcon = document.getElementById('ghostIcon');
+    const ctx = panel.getContext('2d');
+    const gtx = ghostIcon.getContext('2d');
+    const textContainer = document.getElementById('textContainer');
+    const backgroundCanvas = document.getElementById('background');
+    const bgCtx = backgroundCanvas.getContext('2d');
+
+    let maskImage = null;
+    let resultCanvas = null;
+    let scrollOffset = 0;
+    let ghostStarted = false;
+    let placeholder = null;
+    let backgroundTile = null;
+    let backgroundScrollOffset = 0;
+    let imgScale = 1;
+    let imgYOffset = 0;
+    let currentStyle = 'default';
+
+    function loadImageFromFile(imagePath) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const tileSize = 256;
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = tileSize;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = false;
+
+          ctx.drawImage(img, 0, 0, tileSize, tileSize);
+          resolve(canvas);
+        };
+        img.onerror = (e) => {
+          console.error('Failed to load image from ' + imagePath + ':', e);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ff0000';
+          ctx.fillRect(0, 0, 128, 128);
+          ctx.fillStyle = '#00ff00';
+          ctx.fillRect(128, 0, 128, 128);
+          ctx.fillStyle = '#0000ff';
+          ctx.fillRect(0, 128, 128, 128);
+          ctx.fillStyle = '#ffff00';
+          ctx.fillRect(128, 128, 128, 128);
+          resolve(canvas);
+        };
+        img.src = imagePath;
+      });
+    }
+
+    function drawPanel() {
+      if (!maskImage || !placeholder) return;
+
+      scrollOffset = (scrollOffset + 1) % placeholder.width;
+      ctx.clearRect(0, 0, 512, 512);
+      ctx.imageSmoothingEnabled = false;
+
+      const useOriginalRes = false;
+      const canvasSize = useOriginalRes ? Math.max(maskImage.width, maskImage.height, 256) : 256;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = tempCanvas.height = canvasSize;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.imageSmoothingEnabled = false;
+
+      const offset = scrollOffset % placeholder.width;
+
+      for (let y = -offset; y < canvasSize + placeholder.height; y += placeholder.height) {
+        for (let x = -offset; x < canvasSize + placeholder.width; x += placeholder.width) {
+          tempCtx.drawImage(placeholder, x, y);
+        }
+      }
+
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = maskCanvas.height = canvasSize;
+      const maskCtx = maskCanvas.getContext('2d');
+      maskCtx.clearRect(0, 0, canvasSize, canvasSize);
+      maskCtx.imageSmoothingEnabled = false;
+
+      let dx, dy, dw, dh;
+
+      if (useOriginalRes) {
+        dw = maskImage.width;
+        dh = maskImage.height;
+        dx = (canvasSize - dw) / 2;
+        dy = (canvasSize - dh) / 2;
+      } else {
+        const scale = Math.min(canvasSize / maskImage.width, canvasSize / maskImage.height);
+        dw = maskImage.width * scale;
+        dh = maskImage.height * scale;
+        dx = (canvasSize - dw) / 2;
+        dy = (canvasSize - dh) / 2;
+      }
+
+      maskCtx.drawImage(maskImage, dx, dy, dw, dh);
+
+      const maskData = maskCtx.getImageData(0, 0, canvasSize, canvasSize);
+      const texData = tempCtx.getImageData(0, 0, canvasSize, canvasSize);
+      const result = tempCtx.createImageData(canvasSize, canvasSize);
+
+      for (let i = 0; i < maskData.data.length; i += 4) {
+        const r = maskData.data[i];
+        const g = maskData.data[i + 1];
+        const b = maskData.data[i + 2];
+        const a = maskData.data[i + 3];
+        const brightness = (r + g + b) / 3;
+
+        if (brightness > 200 && a > 0) {
+          result.data[i] = texData.data[i];
+          result.data[i + 1] = texData.data[i + 1];
+          result.data[i + 2] = texData.data[i + 2];
+          result.data[i + 3] = 255;
+        } else {
+          result.data[i + 3] = 0;
+        }
+      }
+
+      resultCanvas = document.createElement('canvas');
+      resultCanvas.width = resultCanvas.height = canvasSize;
+      resultCanvas.getContext('2d').putImageData(result, 0, 0);
+
+      const scaledW = resultCanvas.width * imgScale;
+      const scaledH = resultCanvas.height * imgScale;
+      const scaledX = (512 - scaledW) / 2;
+      const scaledY = (256 - scaledH) / 2 - imgYOffset;
+
+      ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+    }
+
+    function drawGhostIcon() {
+      if (!resultCanvas) return;
+
+      const t = performance.now() / 1000;
+      const offset1 = Math.sin(t * 2) * 6;
+      const offset2 = offset1 * 2;
+
+      gtx.clearRect(0, 0, 512, 512);
+      gtx.imageSmoothingEnabled = false;
+      gtx.setTransform(1, 0, 0, 1, offset1, offset1);
+
+      const scaledW = resultCanvas.width * imgScale;
+      const scaledH = resultCanvas.height * imgScale;
+      const scaledX = (512 - scaledW) / 2;
+      const scaledY = (256 - scaledH) / 2 - imgYOffset;
+
+      gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+      gtx.setTransform(1, 0, 0, 1, 0, 0);
+
+      const gtx2 = document.getElementById('ghostIcon2').getContext('2d');
+      gtx2.clearRect(0, 0, 512, 512);
+      gtx2.imageSmoothingEnabled = false;
+      gtx2.setTransform(1, 0, 0, 1, offset2, offset2);
+      gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+      gtx2.setTransform(1, 0, 0, 1, 0, 0);
+
+      requestAnimationFrame(drawGhostIcon);
+    }
+
+    function drawBackground() {
+      if (!backgroundTile) return;
+
+      backgroundScrollOffset = (backgroundScrollOffset + 0.5) % backgroundTile.width;
+      bgCtx.clearRect(0, 0, 512, 256);
+      bgCtx.imageSmoothingEnabled = false;
+
+      const yOffset = -imgYOffset;
+      
+      const scaledTileWidth = backgroundTile.width * imgScale;
+      const scaledTileHeight = backgroundTile.height * imgScale;
+      
+      const offset = (backgroundScrollOffset * imgScale) % scaledTileWidth;
+
+      for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
+        for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
+          bgCtx.drawImage(backgroundTile, x, y, scaledTileWidth, scaledTileHeight);
+        }
+      }
+
+      const canvasSize = 256; 
+      const scaledW = canvasSize * imgScale;
+      const scaledH = canvasSize * imgScale;
+      const imageX = (512 - scaledW) / 2; 
+      const imageY = 64 + yOffset; 
+
+      const radiusX = 160 * imgScale; 
+      const radiusY = 100 * imgScale;  
+
+      bgCtx.save();
+
+      bgCtx.translate(imageX + scaledW/2, imageY);
+      bgCtx.scale(radiusX / radiusY, 1); 
+      bgCtx.translate(-(imageX + scaledW/2), -imageY);
+
+      const gradient = bgCtx.createRadialGradient(imageX + scaledW/2, imageY, 0, imageX + scaledW/2, imageY, radiusY);
+      gradient.addColorStop(0, 'rgba(0,0,0,0)'); 
+      gradient.addColorStop(0.6, 'rgba(0,0,0,0)'); 
+      gradient.addColorStop(1, 'rgba(0,0,0,1)');   
+
+      bgCtx.fillStyle = gradient;
+      bgCtx.fillRect(0, 0, 512, 256); 
+
+      bgCtx.restore();
+    }
+
+    function tryStartGhost() {
+      if (!ghostStarted && resultCanvas) {
+        ghostStarted = true;
+        requestAnimationFrame(drawGhostIcon);
+      }
+    }
+
+    function getAssetPath(name) {
+      const suffix = currentStyle === 'susie' ? '-susie' : '';
+      return `./assets/depth/${name}${suffix}.png`;
+    }
+    
+    function reloadAssetsAndRedraw() {
+      Promise.all([
+        loadImageFromFile(getAssetPath('depth-blue')), 
+        loadImageFromFile(getAssetPath('depth-text')),
+        loadImageFromFile(getAssetPath('depth-darker-new'))
+      ]).then(([tile, textBG, bgTile]) => {
+        placeholder = tile;
+        backgroundTile = bgTile;
+        textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
+        if (maskImage) drawPanel();
+        drawBackground();
+        document.body.classList.toggle('susie-theme', currentStyle === 'susie');
+      });
+    }
+
+    // Main function to set up a panel
+    function setPanel(text, imagePath, style = 'default', scale = 1, yOffset = 0) {
+      // Set style
+      currentStyle = style;
+      document.body.classList.toggle('susie-theme', style === 'susie');
+      
+      // Set text
+      const formattedText = text.replace(/\\n/g, '<br>');
+      textContainer.innerHTML = formattedText;
+      
+      // Set scale and offset
+      imgScale = scale;
+      imgYOffset = yOffset;
+      
+      // Load image
+      const img = new Image();
+      img.onload = () => {
+        maskImage = img;
+        reloadAssetsAndRedraw();
+        drawPanel();
+        tryStartGhost();
+      };
+      img.onerror = () => {
+        console.error(`Failed to load image: ${imagePath}`);
+      };
+      img.src = imagePath;
+    }
+
+    // Initialize animations
+    setInterval(() => {
+      drawPanel();
+      drawBackground();
+    }, 1000 / 30);
+
+    function animateSineWrapper() {
+      const t = performance.now() / 1000;
+      const offset = Math.sin(t * 1.5) * 10;
+      const sineWrapper = document.getElementById('sineWrapper');
+      if (sineWrapper) {
+        sineWrapper.style.transform = `translateY(${offset}px)`;
+      }
+      requestAnimationFrame(animateSineWrapper);
+    }
+    
+    requestAnimationFrame(animateSineWrapper);
+
+    // Example usage on page load
+    window.addEventListener('load', () => {
+      setPanel(
+        'The legend of this world. \\n < Deltarune. >',
+        './assets/base-panels/initial-2.png',
+        'default',
+        1,
+        52
+      );
+    });
+
+    // Make setPanel globally available
+    window.setPanel = setPanel;
+  </script>
+</body>
+</html>
