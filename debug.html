@@ -80,6 +80,16 @@
       50% { opacity: 1; }
     }
 
+    @keyframes pulseFinalGhost1 {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes pulseFinalGhost2 {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0; }
+    }
+
     #output {
       position: relative;
       width: 90vw;
@@ -117,6 +127,15 @@
       top: -50px;
     }
 
+    /* Final style ghost animations - opposite to red counterparts */
+    body.final-theme #ghostIcon {
+      animation: pulseFinalGhost1 1.5s infinite;
+    }
+
+    body.final-theme #ghostIcon2 {
+      animation: pulseFinalGhost2 1.5s infinite;
+    }
+
     #panel {
       z-index: 2;
       top: -50px;
@@ -125,7 +144,6 @@
     /* Red overlay canvases */
     #ghostIconRed {
       z-index: 11;
-      opacity: 0;
       pointer-events: none;
       top: -50px;
       animation: pulseFinalRed 1.5s infinite;
@@ -133,7 +151,6 @@
 
     #ghostIcon2Red {
       z-index: 11;
-      opacity: 0;
       pointer-events: none;
       top: -50px;
       animation: pulseFinalRed 1.5s infinite;
@@ -142,7 +159,6 @@
     #panelRed {
       z-index: 12;
       top: -50px;
-      opacity: 0;
       pointer-events: none;
       animation: pulseFinalRed 1.5s infinite;
     }
