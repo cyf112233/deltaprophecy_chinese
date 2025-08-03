@@ -282,6 +282,34 @@
       box-shadow: 0 0 5px white;
     }
 
+    #overlayWrapper {
+      position: relative;
+      width: 100%;
+      max-width: 512px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: black;
+    }
+    
+    #finalPulseOverlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      background: rgba(255, 0, 0, 0.6);
+      mix-blend-mode: multiply;
+      animation: pulseRed 1.5s infinite;
+      display: block;
+    }
+    
+    @keyframes pulseRed {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
   </style>
 </head>
 <body>
@@ -294,6 +322,7 @@
     <select id="styleSelect">
       <option value="default">Default</option>
       <option value="susie">Susie's Dark World</option>
+      <option value="final">The Final Prophecy</option>
     </select>
   </div>
   <div style="display: flex; justify-content: center; width: 100%;">
@@ -310,14 +339,18 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+  
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
-    <div id="textContainer">Your prophecy here</div>
-    <div id="output">
-      <canvas id="background" width="512" height="256"></canvas>
-      <canvas id="ghostIcon2" width="512" height="256"></canvas>
-      <canvas id="ghostIcon" width="512" height="256"></canvas>
-      <canvas id="panel" width="512" height="256"></canvas>
+    <div id="overlayWrapper">
+      <div id="textContainer">Your prophecy here</div>
+      <div id="output">
+        <canvas id="background" width="512" height="256"></canvas>
+        <canvas id="ghostIcon2" width="512" height="256"></canvas>
+        <canvas id="ghostIcon" width="512" height="256"></canvas>
+        <canvas id="panel" width="512" height="256"></canvas>
+      </div>
+      <div id="finalPulseOverlay"></div>
     </div>
   </div>
 
@@ -452,7 +485,7 @@
       },
       'end': {
         text: 'The final tragedy unveils.',
-        style: 'default',
+        style: 'final',
         yOffset: 55
       },
       'hammer': {
@@ -691,7 +724,9 @@
 
     function getAssetPath(name) {
       const style = styleSelect.value;
-      const suffix = style === 'susie' ? '-susie' : '';
+      let suffix = '';
+      if (style === 'susie') suffix = '-susie';
+      else if (style === 'final') suffix = '-final';
       return `./assets/depth/${name}${suffix}.png`;
     }
     
@@ -707,6 +742,9 @@
         if (maskImage) drawPanel();
         drawBackground();
         document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
+        document.body.classList.toggle('final-theme', styleSelect.value === 'final');
+        document.getElementById('finalPulseOverlay').style.display =
+          (styleSelect.value === 'final') ? 'block' : 'none';
       });
     }
 
@@ -742,6 +780,7 @@
       // Set the style first
       styleSelect.value = randomPanel.style;
       document.body.classList.toggle('susie-theme', randomPanel.style === 'susie');
+      document.body.classList.toggle('final-theme', randomPanel.style === 'final');
       
       // Set the text
       textInput.value = randomPanel.text;
@@ -788,6 +827,7 @@
     requestAnimationFrame(animateSineWrapper);
     
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
+
   </script>
 </body>
 </html>
