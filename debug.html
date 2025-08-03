@@ -286,15 +286,10 @@
       position: relative;
       width: 100%;
       max-width: 512px;
-    }
-    
-    #overlayWrapper {
-      position: relative;
-      width: 100%;
-      max-width: 512px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: black; /* your fully black background */
     }
     
     #finalPulseOverlay {
@@ -304,12 +299,21 @@
       height: 100%;
       pointer-events: none;
       z-index: 5;
+    
+      /* Red pulse color */
       background: rgba(255, 0, 0, 0.25);
+    
+      /* Use multiply so red disappears on black */
       mix-blend-mode: multiply;
+    
+      /* Pulse animation */
       animation: pulseRed 2s infinite;
-      display: none;
+    
+      /* Start visible, change as needed */
+      display: block;
     }
     
+    /* Pulse animation: fade in and out */
     @keyframes pulseRed {
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
