@@ -310,6 +310,51 @@
       50% { opacity: 1; }
     }
 
+    #advancedSettings {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #advancedGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 20px;
+      background: black;
+      border: 2px solid white;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .advancedCell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .previewBox {
+      width: 128px;
+      height: 128px;
+      border: 2px solid white;
+      background-color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 48px;
+      margin-bottom: 5px;
+      image-rendering: pixelated;
+      object-fit: contain;
+    }
+    
+    .fileLabel {
+      font-family: 'DTMSans', sans-serif;
+      font-size: 14px;
+      margin: 4px 0;
+    }
+
   </style>
 </head>
 <body>
@@ -341,24 +386,48 @@
   </div>
 
   <!-- TESTING -->
-  <div style="margin-top: 20px;">
-    <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings ▼</button>
-    <div id="advancedSettings" style="display: none; margin-top: 10px; text-align: left;">
-      <div>
-        <label>Font: <span style="font-family: 'ProphecyType';">Aa</span></label><br />
-        <input type="file" id="fontUpload" accept=".ttf,.otf" />
+  <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings ▼</button>
+  
+  <div id="advancedSettings" style="display: none; margin-top: 10px;">
+    <div id="advancedGrid">
+      <!-- Font -->
+      <div class="advancedCell">
+        <div class="previewBox" style="font-family: 'ProphecyType';">Aa</div>
+        <div class="fileLabel">ProphecyType</div>
+        <label class="custom-file-upload">
+          Upload Font
+          <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
+        </label>
       </div>
-      <div style="margin-top: 10px;">
-        <label>Custom Text Texture:</label><br />
-        <input type="file" id="textTextureUpload" accept="image/*" />
+  
+      <!-- Text Texture -->
+      <div class="advancedCell">
+        <img id="textPreview" class="previewBox" />
+        <div class="fileLabel">Text Texture</div>
+        <label class="custom-file-upload">
+          Upload Text
+          <input type="file" id="textTextureUpload" accept="image/*" style="display: none;" />
+        </label>
       </div>
-      <div style="margin-top: 10px;">
-        <label>Custom Panel Mask:</label><br />
-        <input type="file" id="panelImageUpload" accept="image/*" />
+  
+      <!-- Panel -->
+      <div class="advancedCell">
+        <img id="panelPreview" class="previewBox" />
+        <div class="fileLabel">Panel Image</div>
+        <label class="custom-file-upload">
+          Upload Panel
+          <input type="file" id="panelImageUpload" accept="image/*" style="display: none;" />
+        </label>
       </div>
-      <div style="margin-top: 10px;">
-        <label>Custom Background Tile:</label><br />
-        <input type="file" id="bgImageUpload" accept="image/*" />
+  
+      <!-- Background -->
+      <div class="advancedCell">
+        <img id="bgPreview" class="previewBox" />
+        <div class="fileLabel">Background</div>
+        <label class="custom-file-upload">
+          Upload BG
+          <input type="file" id="bgImageUpload" accept="image/*" style="display: none;" />
+        </label>
       </div>
     </div>
   </div>
@@ -856,6 +925,10 @@
         imgYOffset.value = 0;
         document.getElementById('imgYOffsetValue').textContent = '0px';
       }
+
+      document.getElementById("textPreview").src = getAssetPath("depth-text");
+      document.getElementById("panelPreview").src = `./assets/base-panels/${randomPanelName}.png`;
+      document.getElementById("bgPreview").src = getAssetPath("depth-darker-new");
     });    
 
     function animateSineWrapper() {
@@ -905,6 +978,7 @@
           ctx.imageSmoothingEnabled = false;
           ctx.drawImage(img, 0, 0, 256, 256);
           customTextTexture = canvas;
+          document.getElementById("textPreview").src = img.src;
           reloadAssetsAndRedraw();
         };
         img.src = URL.createObjectURL(file);
@@ -913,17 +987,18 @@
     
     document.getElementById("panelImageUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
-      if (!file) return;
-    
-      const img = new Image();
-      img.onload = () => {
-        placeholder = img; // replace the texture
-        customPanelTexture = img; // optional: track for isCustom
-        drawPanel();
-        drawBackground();
-        tryStartGhost();
-      };
-      img.src = URL.createObjectURL(file);
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          placeholder = img;
+          customPanelTexture = img;
+          document.getElementById("panelPreview").src = img.src;
+          drawPanel();
+          drawBackground();
+          tryStartGhost();
+        };
+        img.src = URL.createObjectURL(file);
+      }
     });
     
     document.getElementById("bgImageUpload").addEventListener("change", (e) => {
@@ -937,6 +1012,7 @@
           ctx.imageSmoothingEnabled = false;
           ctx.drawImage(img, 0, 0, 256, 256);
           customBackgroundTile = canvas;
+          document.getElementById("bgPreview").src = img.src;
           reloadAssetsAndRedraw();
         };
         img.src = URL.createObjectURL(file);
