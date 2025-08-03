@@ -761,17 +761,16 @@
     
     function reloadAssetsAndRedraw() {
       // !!!! TESTING !!!!
-      const isCustom = customTextTexture || customBackgroundTile || customMaskImage;
+      const isCustom = customTextTexture || customBackgroundTile || customPanelTexture;
       // !!!! TESTING !!!!
     
-      // !!!! TESTING !!!!
       Promise.all([
-        loadImageFromFile(getAssetPath('depth-blue')),
+        customPanelTexture ? Promise.resolve(customPanelTexture) : loadImageFromFile(getAssetPath('depth-blue')),
         customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-text')),
         customBackgroundTile ? Promise.resolve(customBackgroundTile) : loadImageFromFile(getAssetPath('depth-darker-new'))
       ])
-      // !!!! TESTING !!!!
       .then(([tile, textBG, bgTile]) => {
+        // !!!! TESTING !!!!
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
@@ -779,7 +778,6 @@
         if (maskImage) drawPanel();
         drawBackground();
     
-        // !!!! TESTING !!!!
         if (!isCustom) {
           document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
           document.body.classList.toggle('final-theme', styleSelect.value === 'final');
