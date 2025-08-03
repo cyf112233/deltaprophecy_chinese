@@ -915,16 +915,17 @@
     
     document.getElementById("panelImageUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
-      if (file) {
-        const img = new Image();
-        img.onload = () => {
-          customMaskImage = img;
-          maskImage = img;
-          drawPanel();
-          tryStartGhost();
-        };
-        img.src = URL.createObjectURL(file);
-      }
+      if (!file) return;
+    
+      const img = new Image();
+      img.onload = () => {
+        placeholder = img; // replace the texture
+        customPanelTexture = img; // optional: track for isCustom
+        drawPanel();
+        drawBackground();
+        tryStartGhost();
+      };
+      img.src = URL.createObjectURL(file);
     });
     
     document.getElementById("bgImageUpload").addEventListener("change", (e) => {
