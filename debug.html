@@ -309,22 +309,23 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
-
+    
     #advancedSettings {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-top: 10px;
     }
     
     #advancedGrid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      padding: 20px;
+      gap: 12px;
+      padding: 12px;
       background: black;
       border: 2px solid white;
-      margin-top: 10px;
       text-align: center;
+      max-width: 400px;
     }
     
     .advancedCell {
@@ -335,26 +336,26 @@
     }
     
     .previewBox {
-      width: 128px;
-      height: 128px;
+      width: 96px;
+      height: 96px;
       border: 2px solid white;
       background-color: #111;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 48px;
-      margin-bottom: 5px;
+      font-size: 36px;
+      margin-bottom: 4px;
       image-rendering: pixelated;
       object-fit: contain;
     }
     
     .fileLabel {
       font-family: 'DTMSans', sans-serif;
-      font-size: 14px;
-      margin: 4px 0;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: white;
     }
-
   </style>
 </head>
 <body>
@@ -393,8 +394,8 @@
     <div id="advancedGrid">
       <!-- Font -->
       <div class="advancedCell">
-        <div class="previewBox" style="font-family: 'ProphecyType';">Aa</div>
-        <div class="fileLabel">ProphecyType</div>
+        <div id="fontPreview" class="previewBox" style="font-family: 'ProphecyType';">Aa</div>
+        <div id="fontLabel" class="fileLabel" style="font-family: 'ProphecyType';">ProphecyType</div>
         <label class="custom-file-upload">
           Upload Font
           <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
@@ -958,10 +959,17 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function () {
-          const newFont = new FontFace("ProphecyType", `url(${reader.result})`);
-          newFont.load().then((loadedFace) => {
-            document.fonts.add(loadedFace);
-            textContainer.style.fontFamily = '"ProphecyType", serif';
+          const fontName = file.name.replace(/\.[^/.]+$/, ""); // strip extension
+          const customFont = new FontFace(fontName, `url(${reader.result})`);
+          customFont.load().then((loadedFont) => {
+            document.fonts.add(loadedFont);
+    
+            // Update preview and label
+            const preview = document.getElementById("fontPreview");
+            const label = document.getElementById("fontLabel");
+            preview.style.fontFamily = `"${fontName}", serif`;
+            label.textContent = fontName;
+            label.style.fontFamily = `"${fontName}", serif`;
           });
         };
         reader.readAsDataURL(file);
