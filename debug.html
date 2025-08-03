@@ -289,7 +289,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: black; /* your fully black background */
+      background-color: black;
     }
     
     #finalPulseOverlay {
@@ -299,21 +299,12 @@
       height: 100%;
       pointer-events: none;
       z-index: 5;
-    
-      /* Red pulse color */
-      background: rgba(255, 0, 0, 0.25);
-    
-      /* Use multiply so red disappears on black */
+      background: rgba(255, 80, 100, 0.5);
       mix-blend-mode: multiply;
-    
-      /* Pulse animation */
-      animation: pulseRed 1s infinite;
-    
-      /* Start visible, change as needed */
+      animation: pulseRed 1.5s infinite;
       display: block;
     }
     
-    /* Pulse animation: fade in and out */
     @keyframes pulseRed {
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
@@ -348,16 +339,6 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
-
-  <!-- DON'T FORGET TO REMOVE THIS -->
-  <label for="overlayColorInput">Overlay RGBA:</label>
-  <input
-    type="text"
-    id="overlayColorInput"
-    value="rgba(255, 0, 0, 0.25)"
-    placeholder="rgba(...)"
-  />
-  <!-- DON'T FORGET TO REMOVE THIS -->
   
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
@@ -846,25 +827,6 @@
     requestAnimationFrame(animateSineWrapper);
     
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
-
-    // DON'T FORGET TO REMOVE THIS!
-    const input = document.getElementById('overlayColorInput');
-    const overlay = document.getElementById('finalPulseOverlay');
-    
-    input.addEventListener('input', () => {
-      const val = input.value.trim();
-    
-      // Basic validation for rgba format using regex
-      const isValidRGBA = /^rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*(0|1|0?\.\d+)\s*\)$/i.test(val);
-    
-      if (isValidRGBA) {
-        overlay.style.background = val;
-      } else {
-        // Optional: indicate invalid input (e.g., red border)
-        input.style.borderColor = 'red';
-      }
-    });
-    // DON'T FORGET TO REMOVE THIS!
 
   </script>
 </body>
