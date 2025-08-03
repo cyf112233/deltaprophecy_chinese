@@ -309,7 +309,149 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
+    
+    #advancedSettings {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+    
+    #advancedGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 12px;
+      background: black;
+      border: 2px solid white;
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    .advancedCell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .previewBox {
+      width: 96px;
+      height: 96px;
+      border: 2px solid white;
+      background-color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 36px;
+      margin-bottom: 8px;
+      image-rendering: pixelated;
+      object-fit: contain;
+      overflow: hidden;
+    }
+    
+    .fileLabel {
+      font-family: 'DTMSans', sans-serif;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: white;
+    }
 
+    .custom-file-upload.small {
+      display: inline-block;
+      font-family: 'DTMSans', sans-serif;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 3px 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 0px;
+      user-select: none;
+      text-align: center;
+      margin-top: 4px;
+    }
+    
+    .custom-file-upload.small:hover {
+      background-color: #222;
+      border-color: #fff;
+    }
+    
+    .custom-file-upload.small:active {
+      background-color: #111;
+    }
+
+    .sliderWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      width: 125px;
+      margin-top: 2px;
+      gap: 4px;
+      user-select: none;
+      grid-column: span 2;
+      justify-self: center;
+    }
+    
+    #fontScale {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 125px;
+      height: 10px;
+      background: transparent;
+      cursor: pointer;
+      margin: 0;
+      align-self: center;
+    }
+    
+    #fontScale::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0px;
+    }
+    
+    #fontScale::-moz-range-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0px;
+    }
+    
+    #fontScale::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: white;
+      border: none;
+      margin-top: -2px;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+    
+    #fontScale::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    }
+
+    .sliderWrapper > .fileLabel:first-child {
+      margin-bottom: auto;
+    }
+    
+    .sliderWrapper > #fontScaleValue {
+      margin-top: auto;
+    }
+
+    #fontPreviewText {
+      transition: font-size 0.1s ease;
+    }
   </style>
 </head>
 <body>
@@ -339,6 +481,64 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+
+  <!-- TESTING -->
+  <div style="height: 10px;"></div>
+  <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings</button>
+  
+  <div id="advancedSettings" style="display: none; margin-top: 10px;">
+    <div id="advancedGrid">
+      <!-- Font -->
+      <div class="advancedCell">
+        <div id="fontPreview" class="previewBox" style="font-family: 'ProphecyType';">
+          <span id="fontPreviewText">Aa</span>
+        </div>
+        <div id="fontLabel" class="fileLabel" style="font-family: 'ProphecyType';">ProphecyType</div>
+        <label class="custom-file-upload small">
+          Upload Font
+          <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
+        </label>
+      </div>
+  
+      <!-- Text Texture -->
+      <div class="advancedCell">
+        <img id="textPreview" class="previewBox" />
+        <div class="fileLabel">Text Texture</div>
+        <label class="custom-file-upload small">
+          Upload Texture
+          <input type="file" id="textTextureUpload" accept="image/*" style="display: none;" />
+        </label>
+      </div>
+  
+      <!-- Panel -->
+      <div class="advancedCell">
+        <img id="panelPreview" class="previewBox" />
+        <div class="fileLabel">Panel Texture</div>
+        <label class="custom-file-upload small">
+          Upload Texture
+          <input type="file" id="panelImageUpload" accept="image/*" style="display: none;" />
+        </label>
+      </div>
+  
+      <!-- Background -->
+      <div class="advancedCell">
+        <img id="bgPreview" class="previewBox" />
+        <div class="fileLabel">Background Texture</div>
+        <label class="custom-file-upload small">
+          Upload Texture
+          <input type="file" id="bgImageUpload" accept="image/*" style="display: none;" />
+        </label>
+      </div>
+
+      <div class="sliderWrapper">
+        <label for="fontScale" class="fileLabel">Font Scale</label>
+        <input type="range" id="fontScale" min="0.5" max="2" step="0.05" value="1">
+        <span id="fontScaleValue" class="fileLabel">1.00×</span>
+      </div>
+
+    </div>
+  </div>
+  <!-- TESTING -->
   
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
@@ -729,22 +929,42 @@
       else if (style === 'final') suffix = '-final';
       return `./assets/depth/${name}${suffix}.png`;
     }
+
+    // !!!! TESTING !!!! — GLOBAL FLAG FOR CUSTOM ASSETS
+    let customTextTexture = null;
+    let customBackgroundTile = null;
+    let customPanelTexture = null;
     
     function reloadAssetsAndRedraw() {
+      // !!!! TESTING !!!!
+      const isCustom = customTextTexture || customBackgroundTile || customPanelTexture;
+      // !!!! TESTING !!!!
+    
       Promise.all([
-        loadImageFromFile(getAssetPath('depth-blue')), 
-        loadImageFromFile(getAssetPath('depth-text')),
-        loadImageFromFile(getAssetPath('depth-darker-new'))
-      ]).then(([tile, textBG, bgTile]) => {
+        customPanelTexture ? Promise.resolve(customPanelTexture) : loadImageFromFile(getAssetPath('depth-blue')),
+        customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-text')),
+        customBackgroundTile ? Promise.resolve(customBackgroundTile) : loadImageFromFile(getAssetPath('depth-darker-new'))
+      ])
+      .then(([tile, textBG, bgTile]) => {
+        // !!!! TESTING !!!!
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
+    
         if (maskImage) drawPanel();
         drawBackground();
-        document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
-        document.body.classList.toggle('final-theme', styleSelect.value === 'final');
-        document.getElementById('finalPulseOverlay').style.display =
-          (styleSelect.value === 'final') ? 'block' : 'none';
+    
+        if (!isCustom) {
+          document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
+          document.body.classList.toggle('final-theme', styleSelect.value === 'final');
+          document.getElementById('finalPulseOverlay').style.display =
+            (styleSelect.value === 'final') ? 'block' : 'none';
+        } else {
+          document.body.classList.remove('susie-theme');
+          document.body.classList.remove('final-theme');
+          document.getElementById('finalPulseOverlay').style.display = 'none';
+        }
+        // !!!! TESTING !!!!
       });
     }
 
@@ -812,6 +1032,10 @@
         imgYOffset.value = 0;
         document.getElementById('imgYOffsetValue').textContent = '0px';
       }
+
+      document.getElementById("textPreview").src = getAssetPath("depth-text");
+      document.getElementById("panelPreview").src = getAssetPath("depth-blue");
+      document.getElementById("bgPreview").src = getAssetPath("depth-darker-new");
     });    
 
     function animateSineWrapper() {
@@ -827,6 +1051,103 @@
     requestAnimationFrame(animateSineWrapper);
     
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
+
+    // !!!! TESTING !!!!
+    
+    function toggleAdvancedSettings() {
+      const div = document.getElementById("advancedSettings");
+      div.style.display = div.style.display === "none" ? "block" : "none";
+    }
+    
+    document.getElementById("fontUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const fontName = file.name.replace(/\.[^/.]+$/, ""); // strip extension
+          const customFont = new FontFace(fontName, `url(${reader.result})`);
+          customFont.load().then((loadedFont) => {
+            document.fonts.add(loadedFont);
+    
+            // Update preview and label
+            const preview = document.getElementById("fontPreview");
+            const label = document.getElementById("fontLabel");
+            const previewText = document.getElementById("fontPreviewText");
+            const textContainer = document.getElementById("textContainer");
+            
+            previewText.style.fontFamily = `"${fontName}", serif`;
+            label.textContent = fontName;
+            label.style.fontFamily = `"${fontName}", serif`;
+            textContainer.style.fontFamily = `"${fontName}", serif`;
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    document.getElementById("textTextureUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext("2d");
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, 256, 256);
+          customTextTexture = canvas;
+          document.getElementById("textPreview").src = img.src;
+          reloadAssetsAndRedraw();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    
+    document.getElementById("panelImageUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          placeholder = img;
+          customPanelTexture = img;
+          document.getElementById("panelPreview").src = img.src;
+          drawPanel();
+          drawBackground();
+          tryStartGhost();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    
+    document.getElementById("bgImageUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext("2d");
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, 256, 256);
+          customBackgroundTile = canvas;
+          document.getElementById("bgPreview").src = img.src;
+          reloadAssetsAndRedraw();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+
+    const fontScale = document.getElementById("fontScale");
+    const fontScaleValue = document.getElementById("fontScaleValue");
+    
+    fontScale.addEventListener("input", () => {
+      const scale = parseFloat(fontScale.value).toFixed(2);
+      fontScaleValue.textContent = `${scale}×`;
+      const fontPreviewText = document.getElementById("fontPreviewText");
+      fontPreviewText.style.fontSize = `${36 * scale}px`;
+      document.getElementById("textContainer").style.transform = `scale(${scale})`;
+    });
+    // !!!! TESTING !!!!
 
   </script>
 </body>
