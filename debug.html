@@ -753,6 +753,11 @@
       else if (style === 'final') suffix = '-final';
       return `./assets/depth/${name}${suffix}.png`;
     }
+
+    // !!!! TESTING !!!! — GLOBAL FLAG FOR CUSTOM ASSETS
+    let customTextTexture = null;
+    let customBackgroundTile = null;
+    let customMaskImage = null;
     
     function reloadAssetsAndRedraw() {
       // !!!! TESTING !!!!
