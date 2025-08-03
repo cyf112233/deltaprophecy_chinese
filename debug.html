@@ -532,7 +532,7 @@
 
       <div class="sliderWrapper">
         <label for="fontScale" class="fileLabel">Font Scale</label>
-        <input type="range" id="fontScale" min="0.5" max="2" step="0.01" value="1">
+        <input type="range" id="fontScale" min="0.5" max="2" step="0.05" value="1">
         <span id="fontScaleValue" class="fileLabel">1.00×</span>
       </div>
 
@@ -840,6 +840,8 @@
       const gtx2 = document.getElementById('ghostIcon2').getContext('2d');
       gtx2.clearRect(0, 0, 512, 512);
       gtx2.imageSmoothingEnabled = false;
+      gtx2.setTransform(1, 0, 0, 1, offset2, offset2);
+      gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx2.setTransform(1, 0, 0, 1, 0, 0);
 
       requestAnimationFrame(drawGhostIcon);
@@ -1071,9 +1073,12 @@
             const preview = document.getElementById("fontPreview");
             const label = document.getElementById("fontLabel");
             const previewText = document.getElementById("fontPreviewText");
+            const textContainer = document.getElementById("textContainer");
+            
             previewText.style.fontFamily = `"${fontName}", serif`;
             label.textContent = fontName;
             label.style.fontFamily = `"${fontName}", serif`;
+            textContainer.style.fontFamily = `"${fontName}", serif`;
           });
         };
         reader.readAsDataURL(file);
@@ -1146,6 +1151,4 @@
 
   </script>
 </body>
-</html> 1, offset2, offset2);
-      gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
-      gtx2.setTransform(1, 0, 0,
+</html>
