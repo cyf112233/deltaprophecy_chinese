@@ -282,24 +282,33 @@
       box-shadow: 0 0 5px white;
     }
 
-    #finalPulseOverlay {
-      position: absolute;
+    #overlayWrapper {
+      position: relative;
       width: 100%;
-      height: 100%;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 999; /* ensure it's above the canvas */
-      background: rgba(255, 0, 0, 0.2);
-      mix-blend-mode: screen;
-      opacity: 0;
-      animation: pulseRed 2s infinite;
-      display: none; /* only visible in 'final' style */
+      max-width: 512px;
     }
     
-    @keyframes pulseRed {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
+    #finalPulseOverlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      background: rgba(255, 0, 0, 1); /* Full red */
+      mix-blend-mode: screen;
+      animation: pulseRed 2s infinite;
+      display: none;
+    
+      /* Optional: hide overlay on black using a mask */
+      -webkit-mask-image: linear-gradient(white, white); /* required for Safari fallback */
+      mask-image: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, white 100%);
     }
+    @keyframes pulseRed {
+      0%, 100% { opacity: 0.0; }
+      50% { opacity: 0.5; }
+    }
+
   </style>
 </head>
 <body>
