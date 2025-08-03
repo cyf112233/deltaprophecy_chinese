@@ -730,6 +730,7 @@
         drawBackground();
         document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
         document.body.classList.toggle('final-theme', styleSelect.value === 'final');
+        document.getElementById('finalPulseOverlay').style.display = (styleSelect.value === 'final') ? 'block' : 'none';
       });
     }
 
