@@ -345,7 +345,7 @@
       justify-content: center;
       color: white;
       font-size: 36px;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
       image-rendering: pixelated;
       object-fit: contain;
     }
@@ -356,6 +356,31 @@
       margin-bottom: 4px;
       color: white;
     }
+
+    .custom-file-upload.small {
+      display: inline-block;
+      font-family: 'DTMSans', sans-serif;
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 3px 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 0px;
+      user-select: none;
+      text-align: center;
+      margin-top: 4px;
+    }
+    
+    .custom-file-upload.small:hover {
+      background-color: #222;
+      border-color: #fff;
+    }
+    
+    .custom-file-upload.small:active {
+      background-color: #111;
+    }
+
   </style>
 </head>
 <body>
@@ -396,7 +421,7 @@
       <div class="advancedCell">
         <div id="fontPreview" class="previewBox" style="font-family: 'ProphecyType';">Aa</div>
         <div id="fontLabel" class="fileLabel" style="font-family: 'ProphecyType';">ProphecyType</div>
-        <label class="custom-file-upload">
+        <label class="custom-file-upload small">
           Upload Font
           <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
         </label>
@@ -406,8 +431,8 @@
       <div class="advancedCell">
         <img id="textPreview" class="previewBox" />
         <div class="fileLabel">Text Texture</div>
-        <label class="custom-file-upload">
-          Upload Text
+        <label class="custom-file-upload small">
+          Upload Texture
           <input type="file" id="textTextureUpload" accept="image/*" style="display: none;" />
         </label>
       </div>
@@ -416,8 +441,8 @@
       <div class="advancedCell">
         <img id="panelPreview" class="previewBox" />
         <div class="fileLabel">Panel Image</div>
-        <label class="custom-file-upload">
-          Upload Panel
+        <label class="custom-file-upload small">
+          Upload Texture
           <input type="file" id="panelImageUpload" accept="image/*" style="display: none;" />
         </label>
       </div>
@@ -426,8 +451,8 @@
       <div class="advancedCell">
         <img id="bgPreview" class="previewBox" />
         <div class="fileLabel">Background</div>
-        <label class="custom-file-upload">
-          Upload BG
+        <label class="custom-file-upload small">
+          Upload Texture
           <input type="file" id="bgImageUpload" accept="image/*" style="display: none;" />
         </label>
       </div>
