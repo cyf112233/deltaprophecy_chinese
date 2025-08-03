@@ -340,12 +340,14 @@
   </div>
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
-    <div id="textContainer">Your prophecy here</div>
-    <div id="output">
-      <canvas id="background" width="512" height="256"></canvas>
-      <canvas id="ghostIcon2" width="512" height="256"></canvas>
-      <canvas id="ghostIcon" width="512" height="256"></canvas>
-      <canvas id="panel" width="512" height="256"></canvas>
+    <div id="overlayWrapper">
+      <div id="textContainer">Your prophecy here</div>
+      <div id="output">
+        <canvas id="background" width="512" height="256"></canvas>
+        <canvas id="ghostIcon2" width="512" height="256"></canvas>
+        <canvas id="ghostIcon" width="512" height="256"></canvas>
+        <canvas id="panel" width="512" height="256"></canvas>
+      </div>
       <div id="finalPulseOverlay"></div>
     </div>
   </div>
@@ -739,7 +741,8 @@
         drawBackground();
         document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
         document.body.classList.toggle('final-theme', styleSelect.value === 'final');
-        document.getElementById('finalPulseOverlay').style.display = (styleSelect.value === 'final') ? 'block' : 'none';
+        document.getElementById('finalPulseOverlay').style.display =
+          (styleSelect.value === 'final') ? 'block' : 'none';
       });
     }
 
