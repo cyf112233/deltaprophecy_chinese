@@ -380,13 +380,58 @@
     .custom-file-upload.small:active {
       background-color: #111;
     }
-   
+
     .sliderWrapper {
-      grid-column: span 2;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 8px;
+      margin-top: 6px;
+      width: 100%;
+    }
+    
+    #fontScale {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 96px;
+      height: 10px;
+      background: transparent;
+      border-radius: 0px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    
+    #fontScale::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0px;
+    }
+    
+    #fontScale::-moz-range-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0px;
+    }
+    
+    #fontScale::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: white;
+      border: none;
+      margin-top: -2px;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+    
+    #fontScale::-moz-range-thumb {
+      width: 15px;
+      height: 15px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5);
     }
     
   </style>
@@ -421,7 +466,7 @@
 
   <!-- TESTING -->
   <div style="height: 10px;"></div>
-  <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings ▼</button>
+  <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings</button>
   
   <div id="advancedSettings" style="display: none; margin-top: 10px;">
     <div id="advancedGrid">
@@ -1066,6 +1111,16 @@
         };
         img.src = URL.createObjectURL(file);
       }
+    });
+
+    const fontScale = document.getElementById("fontScale");
+    const fontScaleValue = document.getElementById("fontScaleValue");
+    
+    fontScale.addEventListener("input", () => {
+      const scale = parseFloat(fontScale.value).toFixed(2);
+      fontScaleValue.textContent = `${scale}×`;
+      document.getElementById("fontPreview").style.transform = `scale(${scale})`;
+      document.getElementById("textContainer").style.transform = `scale(${scale})`;
     });
     // !!!! TESTING !!!!
 
