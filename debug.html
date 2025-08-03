@@ -294,6 +294,7 @@
     <select id="styleSelect">
       <option value="default">Default</option>
       <option value="susie">Susie's Dark World</option>
+      <option value="final">The Final Prophecy</option>
     </select>
   </div>
   <div style="display: flex; justify-content: center; width: 100%;">
@@ -452,7 +453,7 @@
       },
       'end': {
         text: 'The final tragedy unveils.',
-        style: 'default',
+        style: 'final',
         yOffset: 55
       },
       'hammer': {
@@ -691,7 +692,9 @@
 
     function getAssetPath(name) {
       const style = styleSelect.value;
-      const suffix = style === 'susie' ? '-susie' : '';
+      let suffix = '';
+      if (style === 'susie') suffix = '-susie';
+      else if (style === 'final') suffix = '-final';
       return `./assets/depth/${name}${suffix}.png`;
     }
     
@@ -707,6 +710,7 @@
         if (maskImage) drawPanel();
         drawBackground();
         document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
+        document.body.classList.toggle('final-theme', styleSelect.value === 'final');
       });
     }
 
@@ -742,6 +746,7 @@
       // Set the style first
       styleSelect.value = randomPanel.style;
       document.body.classList.toggle('susie-theme', randomPanel.style === 'susie');
+      document.body.classList.toggle('final-theme', randomPanel.style === 'final');
       
       // Set the text
       textInput.value = randomPanel.text;
