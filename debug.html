@@ -339,6 +339,30 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+
+  <!-- TESTING -->
+  <div style="margin-top: 20px;">
+    <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings ▼</button>
+    <div id="advancedSettings" style="display: none; margin-top: 10px; text-align: left;">
+      <div>
+        <label>Font: <span style="font-family: 'ProphecyType';">Aa</span></label><br />
+        <input type="file" id="fontUpload" accept=".ttf,.otf" />
+      </div>
+      <div style="margin-top: 10px;">
+        <label>Custom Text Texture:</label><br />
+        <input type="file" id="textTextureUpload" accept="image/*" />
+      </div>
+      <div style="margin-top: 10px;">
+        <label>Custom Panel Mask:</label><br />
+        <input type="file" id="panelImageUpload" accept="image/*" />
+      </div>
+      <div style="margin-top: 10px;">
+        <label>Custom Background Tile:</label><br />
+        <input type="file" id="bgImageUpload" accept="image/*" />
+      </div>
+    </div>
+  </div>
+  <!-- TESTING -->
   
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
@@ -731,20 +755,40 @@
     }
     
     function reloadAssetsAndRedraw() {
+     
+      // !!!! TESTING !!!!
+      const isCustom = customTextTexture || customBackgroundTile || customMaskImage;
+      // !!!! TESTING !!!!
+    
+      // !!!! TESTING !!!!
       Promise.all([
-        loadImageFromFile(getAssetPath('depth-blue')), 
-        loadImageFromFile(getAssetPath('depth-text')),
-        loadImageFromFile(getAssetPath('depth-darker-new'))
-      ]).then(([tile, textBG, bgTile]) => {
+        customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-blue')),
+        customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-text')),
+        customBackgroundTile ? Promise.resolve(customBackgroundTile) : loadImageFromFile(getAssetPath('depth-darker-new'))
+      ])
+      // !!!! TESTING !!!!
+        
+      .then(([tile, textBG, bgTile]) => {
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
+    
         if (maskImage) drawPanel();
         drawBackground();
-        document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
-        document.body.classList.toggle('final-theme', styleSelect.value === 'final');
-        document.getElementById('finalPulseOverlay').style.display =
-          (styleSelect.value === 'final') ? 'block' : 'none';
+    
+        // !!!! TESTING !!!!
+        if (!isCustom) {
+          document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
+          document.body.classList.toggle('final-theme', styleSelect.value === 'final');
+          document.getElementById('finalPulseOverlay').style.display =
+            (styleSelect.value === 'final') ? 'block' : 'none';
+        } else {
+          document.body.classList.remove('susie-theme');
+          document.body.classList.remove('final-theme');
+          document.getElementById('finalPulseOverlay').style.display = 'none';
+        }
+        // !!!! TESTING !!!!
+        
       });
     }
 
@@ -827,6 +871,80 @@
     requestAnimationFrame(animateSineWrapper);
     
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
+
+    // !!!! TESTING !!!!
+    let customTextTexture = null;
+    let customBackgroundTile = null;
+    let customMaskImage = null;
+    
+    function toggleAdvancedSettings() {
+      const div = document.getElementById("advancedSettings");
+      div.style.display = div.style.display === "none" ? "block" : "none";
+    }
+    
+    document.getElementById("fontUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const newFont = new FontFace("ProphecyType", `url(${reader.result})`);
+          newFont.load().then((loadedFace) => {
+            document.fonts.add(loadedFace);
+            textContainer.style.fontFamily = '"ProphecyType", serif';
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    document.getElementById("textTextureUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext("2d");
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, 256, 256);
+          customTextTexture = canvas;
+          reloadAssetsAndRedraw();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    
+    document.getElementById("panelImageUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          customMaskImage = img;
+          maskImage = img;
+          drawPanel();
+          tryStartGhost();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    
+    document.getElementById("bgImageUpload").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 256;
+          const ctx = canvas.getContext("2d");
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, 256, 256);
+          customBackgroundTile = canvas;
+          reloadAssetsAndRedraw();
+        };
+        img.src = URL.createObjectURL(file);
+      }
+    });
+    // !!!! TESTING !!!!
 
   </script>
 </body>
