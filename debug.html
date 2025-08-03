@@ -46,23 +46,9 @@
       background-repeat: repeat;
     }
 
-    /* Red pulsing animation for final theme */
-    #textContainer.final-theme {
-      animation: scrollBg 30s linear infinite, redPulse 0.8s ease-in-out infinite alternate;
-    }
-
     @keyframes scrollBg {
       0% { background-position: 0 0; }
       100% { background-position: 512px 512px; }
-    }
-
-    @keyframes redPulse {
-      0% { 
-        filter: hue-rotate(0deg) saturate(1) brightness(1);
-      }
-      100% { 
-        filter: hue-rotate(-20deg) saturate(1.5) brightness(1.3) contrast(1.2);
-      }
     }
 
     #output {
@@ -366,7 +352,6 @@
     let placeholder = null;
     let backgroundTile = null;
     let backgroundScrollOffset = 0;
-    let originalTextBG = null;
 
     // Define all available panels with their preset text and style
     const panelPresets = {
@@ -516,37 +501,6 @@
       });
     }
 
-    // Function to apply red overlay to image data for "final" style
-    function applyRedOverlay(imageData, overlayIntensity) {
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-        
-        if (a > 0) { // Only apply to visible pixels
-          // Apply red overlay with varying opacity
-          const redBoost = 255 * overlayIntensity * 0.8;
-          const colorDampen = 1 - (overlayIntensity * 0.6);
-          
-          data[i] = Math.min(255, r + redBoost); // Boost red significantly
-          data[i + 1] = Math.min(255, g * colorDampen); // Reduce green
-          data[i + 2] = Math.min(255, b * colorDampen); // Reduce blue
-        }
-      }
-      return imageData;
-    }
-
-    // Simplified function to just toggle CSS class for text effect
-    function updateTextBackground() {
-      if (styleSelect.value === 'final') {
-        textContainer.classList.add('final-theme');
-      } else {
-        textContainer.classList.remove('final-theme');
-      }
-    }
-
     function drawPanel() {
       if (!maskImage || !placeholder) return;
 
@@ -564,28 +518,9 @@
 
       const offset = scrollOffset % placeholder.width;
 
-      // Apply red pulse to the placeholder texture if final theme
-      let processedPlaceholder = placeholder;
-      if (styleSelect.value === 'final') {
-        const t = performance.now() / 1000;
-        const pulseIntensity = (Math.sin(t * 2) + 1) / 2; // Main pulse timing
-        
-        const pulseCanvas = document.createElement('canvas');
-        pulseCanvas.width = placeholder.width;
-        pulseCanvas.height = placeholder.height;
-        const pulseCtx = pulseCanvas.getContext('2d');
-        pulseCtx.drawImage(placeholder, 0, 0);
-        
-        const pulseImageData = pulseCtx.getImageData(0, 0, placeholder.width, placeholder.height);
-        const filteredData = applyRedOverlay(pulseImageData, pulseIntensity * 0.7);
-        pulseCtx.putImageData(filteredData, 0, 0);
-        
-        processedPlaceholder = pulseCanvas;
-      }
-
-      for (let y = -offset; y < canvasSize + processedPlaceholder.height; y += processedPlaceholder.height) {
-        for (let x = -offset; x < canvasSize + processedPlaceholder.width; x += processedPlaceholder.width) {
-          tempCtx.drawImage(processedPlaceholder, x, y);
+      for (let y = -offset; y < canvasSize + placeholder.height; y += placeholder.height) {
+        for (let x = -offset; x < canvasSize + placeholder.width; x += placeholder.width) {
+          tempCtx.drawImage(placeholder, x, y);
         }
       }
 
@@ -598,11 +533,13 @@
       let dx, dy, dw, dh;
 
       if (useOriginalRes) {
+
         dw = maskImage.width;
         dh = maskImage.height;
         dx = (canvasSize - dw) / 2;
         dy = (canvasSize - dh) / 2;
       } else {
+
         const scale = Math.min(canvasSize / maskImage.width, canvasSize / maskImage.height);
         dw = maskImage.width * scale;
         dh = maskImage.height * scale;
@@ -645,6 +582,7 @@
       const scaledY = (256 - scaledH) / 2 - parseInt(imgYOffset.value, 10);
 
       ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+
     }
 
     function drawGhostIcon() {
@@ -654,42 +592,24 @@
       const offset1 = Math.sin(t * 2) * 6;
       const offset2 = offset1 * 2;
 
-      // Apply red pulse to ghost icons if final theme
-      let processedResultCanvas = resultCanvas;
-      if (styleSelect.value === 'final') {
-        const pulseIntensity = (Math.sin(t * 2.7) + 1) / 2; // Slightly different timing for variation
-        
-        const ghostCanvas = document.createElement('canvas');
-        ghostCanvas.width = resultCanvas.width;
-        ghostCanvas.height = resultCanvas.height;
-        const ghostCtx = ghostCanvas.getContext('2d');
-        ghostCtx.drawImage(resultCanvas, 0, 0);
-        
-        const ghostImageData = ghostCtx.getImageData(0, 0, resultCanvas.width, resultCanvas.height);
-        const filteredGhostData = applyRedOverlay(ghostImageData, pulseIntensity * 0.6);
-        ghostCtx.putImageData(filteredGhostData, 0, 0);
-        
-        processedResultCanvas = ghostCanvas;
-      }
-
       gtx.clearRect(0, 0, 512, 512);
       gtx.imageSmoothingEnabled = false;
       gtx.setTransform(1, 0, 0, 1, offset1, offset1);
 
       let scale = parseFloat(imgScale.value);
-      const scaledW = processedResultCanvas.width * scale;
-      const scaledH = processedResultCanvas.height * scale;
+      const scaledW = resultCanvas.width * scale;
+      const scaledH = resultCanvas.height * scale;
       const scaledX = (512 - scaledW) / 2;
       const scaledY = (256 - scaledH) / 2 - parseInt(imgYOffset.value, 10);
 
-      gtx.drawImage(processedResultCanvas, 0, 0, processedResultCanvas.width, processedResultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+      gtx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx.setTransform(1, 0, 0, 1, 0, 0);
 
       const gtx2 = document.getElementById('ghostIcon2').getContext('2d');
       gtx2.clearRect(0, 0, 512, 512);
       gtx2.imageSmoothingEnabled = false;
       gtx2.setTransform(1, 0, 0, 1, offset2, offset2);
-      gtx2.drawImage(processedResultCanvas, 0, 0, processedResultCanvas.width, processedResultCanvas.height, scaledX, scaledY, scaledW, scaledH);
+      gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx2.setTransform(1, 0, 0, 1, 0, 0);
 
       requestAnimationFrame(drawGhostIcon);
@@ -705,35 +625,16 @@
       const scale = parseFloat(imgScale.value);
       const yOffset = -parseInt(imgYOffset.value, 10);
       
-      // Apply red pulse to background if final theme
-      let processedBackgroundTile = backgroundTile;
-      if (styleSelect.value === 'final') {
-        const t = performance.now() / 1000;
-        const pulseIntensity = (Math.sin(t * 1.8) + 1) / 2; // Different timing for background
-        
-        const bgPulseCanvas = document.createElement('canvas');
-        bgPulseCanvas.width = backgroundTile.width;
-        bgPulseCanvas.height = backgroundTile.height;
-        const bgPulseCtx = bgPulseCanvas.getContext('2d');
-        bgPulseCtx.drawImage(backgroundTile, 0, 0);
-        
-        const bgImageData = bgPulseCtx.getImageData(0, 0, backgroundTile.width, backgroundTile.height);
-        const filteredBgData = applyRedOverlay(bgImageData, pulseIntensity * 0.4);
-        bgPulseCtx.putImageData(filteredBgData, 0, 0);
-        
-        processedBackgroundTile = bgPulseCanvas;
-      }
-      
       // Scale the background tile size
-      const scaledTileWidth = processedBackgroundTile.width * scale;
-      const scaledTileHeight = processedBackgroundTile.height * scale;
+      const scaledTileWidth = backgroundTile.width * scale;
+      const scaledTileHeight = backgroundTile.height * scale;
       
       const offset = (backgroundScrollOffset * scale) % scaledTileWidth;
 
       // Draw scaled background tiles
       for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
         for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
-          bgCtx.drawImage(processedBackgroundTile, x, y, scaledTileWidth, scaledTileHeight);
+          bgCtx.drawImage(backgroundTile, x, y, scaledTileWidth, scaledTileHeight);
         }
       }
 
@@ -805,14 +706,7 @@
       ]).then(([tile, textBG, bgTile]) => {
         placeholder = tile;
         backgroundTile = bgTile;
-        originalTextBG = textBG; // Store original for potential future use
-        
-        // Set the background image normally, CSS animation will handle the red effect
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
-        
-        // Update text effect based on current style
-        updateTextBackground();
-        
         if (maskImage) drawPanel();
         drawBackground();
         document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
@@ -824,7 +718,6 @@
     setInterval(() => {
       drawPanel();
       drawBackground();
-      // No longer need to call updateTextBackground every frame - CSS handles it!
     }, 1000 / 30);
 
     imgYOffset.addEventListener('input', () => {
