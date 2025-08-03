@@ -288,25 +288,28 @@
       max-width: 512px;
     }
     
+    #overlayWrapper {
+      position: relative;
+      width: 100%;
+      max-width: 512px;
+    }
+    
     #finalPulseOverlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 10;
-      background: rgba(255, 0, 0, 1); /* Full red */
+      z-index: 5;
+      background: rgba(255, 0, 0, 0.25);
       mix-blend-mode: screen;
       animation: pulseRed 2s infinite;
       display: none;
-    
-      /* Optional: hide overlay on black using a mask */
-      -webkit-mask-image: linear-gradient(white, white); /* required for Safari fallback */
-      mask-image: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, white 100%);
     }
+    
     @keyframes pulseRed {
-      0%, 100% { opacity: 0.0; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
     }
 
   </style>
