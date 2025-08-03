@@ -307,7 +307,7 @@
       mix-blend-mode: multiply;
     
       /* Pulse animation */
-      animation: pulseRed 2s infinite;
+      animation: pulseRed 1s infinite;
     
       /* Start visible, change as needed */
       display: block;
@@ -348,6 +348,17 @@
       <span id="imgYOffsetValue">0px</span>
     </div>
   </div>
+
+  <!-- DON'T FORGET TO REMOVE THIS -->
+  <label for="overlayColorInput">Overlay RGBA:</label>
+  <input
+    type="text"
+    id="overlayColorInput"
+    value="rgba(255, 0, 0, 0.25)"
+    placeholder="rgba(...)"
+  />
+  <!-- DON'T FORGET TO REMOVE THIS -->
+  
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
     <div id="overlayWrapper">
@@ -835,6 +846,26 @@
     requestAnimationFrame(animateSineWrapper);
     
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
+
+    // DON'T FORGET TO REMOVE THIS!
+    const input = document.getElementById('overlayColorInput');
+    const overlay = document.getElementById('finalPulseOverlay');
+    
+    input.addEventListener('input', () => {
+      const val = input.value.trim();
+    
+      // Basic validation for rgba format using regex
+      const isValidRGBA = /^rgba?\(\s*(\d{1,3}\s*,){2,3}\s*[\d\.]+\s*\)$/i.test(val);
+    
+      if (isValidRGBA) {
+        overlay.style.background = val;
+      } else {
+        // Optional: indicate invalid input (e.g., red border)
+        input.style.borderColor = 'red';
+      }
+    });
+    // DON'T FORGET TO REMOVE THIS!
+
   </script>
 </body>
 </html>
