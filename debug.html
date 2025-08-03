@@ -755,19 +755,17 @@
     }
     
     function reloadAssetsAndRedraw() {
-     
       // !!!! TESTING !!!!
       const isCustom = customTextTexture || customBackgroundTile || customMaskImage;
       // !!!! TESTING !!!!
     
       // !!!! TESTING !!!!
       Promise.all([
-        customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-blue')),
+        loadImageFromFile(getAssetPath('depth-blue')),
         customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-text')),
         customBackgroundTile ? Promise.resolve(customBackgroundTile) : loadImageFromFile(getAssetPath('depth-darker-new'))
       ])
       // !!!! TESTING !!!!
-        
       .then(([tile, textBG, bgTile]) => {
         placeholder = tile;
         backgroundTile = bgTile;
@@ -788,7 +786,6 @@
           document.getElementById('finalPulseOverlay').style.display = 'none';
         }
         // !!!! TESTING !!!!
-        
       });
     }
 
