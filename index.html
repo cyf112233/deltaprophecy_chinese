@@ -192,6 +192,7 @@
       opacity: 0;
       pointer-events: none;
       animation: pulseFinalBG 2s infinite;
+      filter: blur(1.5px);
     }
 
     #background {
@@ -208,6 +209,7 @@
       image-rendering: -moz-crisp-edges;
       image-rendering: -webkit-optimize-contrast;
       opacity: 0.5;
+      filter: blur(1.5px);
     }
 
     body.susie-theme #background {
@@ -1360,12 +1362,12 @@
   
         if (decoded !== expected) {
           console.warn('File contents do not match. Redirecting...');
-          window.location.href = 'https://deltaprophecy.vercel.app/';
+          window.location.href = 'https://deltaprophecy.vercel.app/404.html';
         }
       })
       .catch(err => {
         console.error('Failed to fetch or decode file:', err);
-        window.location.href = 'https://deltaprophecy.vercel.app/';
+        window.location.href = 'https://deltaprophecy.vercel.app/404.html';
       });
 </script>
 </body>
