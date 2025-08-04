@@ -146,6 +146,7 @@
       z-index: 11;
       pointer-events: none;
       top: -50px;
+      opacity: 0;
       animation: pulseFinalRed 1.5s infinite;
     }
 
@@ -153,12 +154,32 @@
       z-index: 11;
       pointer-events: none;
       top: -50px;
+      opacity: 0;
       animation: pulseFinalRed 1.5s infinite;
     }
 
     #panelRed {
       z-index: 12;
       top: -50px;
+      pointer-events: none;
+      opacity: 0;
+      animation: pulseFinalRed 1.5s infinite;
+    }
+
+    #backgroundRed {
+      position: absolute;
+      width: 90vw;
+      max-width: 512px;
+      height: auto;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5; 
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      opacity: 0;
       pointer-events: none;
       animation: pulseFinalRed 1.5s infinite;
     }
@@ -599,6 +620,7 @@
       <div id="textContainerRed">Your prophecy here</div>
       <div id="output">
         <canvas id="background" width="512" height="256"></canvas>
+        <canvas id="backgroundRed" width="512" height="256"></canvas>
         <canvas id="ghostIcon2" width="512" height="256"></canvas>
         <canvas id="ghostIcon" width="512" height="256"></canvas>
         <canvas id="panel" width="512" height="256"></canvas>
@@ -634,7 +656,9 @@
     const imgScale = document.getElementById('imgScale');
     const imgScaleValue = document.getElementById('imgScaleValue');
     const backgroundCanvas = document.getElementById('background');
+    const backgroundRedCanvas = document.getElementById('backgroundRed');
     const bgCtx = backgroundCanvas.getContext('2d');
+    const bgRedCtx = backgroundRedCanvas.getContext('2d');
     const styleSelect = document.getElementById('styleSelect');
 
     let maskImage = null;
@@ -645,6 +669,7 @@
     let placeholder = null;
     let placeholderRed = null;
     let backgroundTile = null;
+    let backgroundTileRed = null;
     let backgroundScrollOffset = 0;
 
     // Define all available panels with their preset text and style
@@ -969,6 +994,19 @@
         }
       }
 
+      // Draw red background if it exists
+      if (backgroundTileRed) {
+        bgRedCtx.clearRect(0, 0, 512, 256);
+        bgRedCtx.imageSmoothingEnabled = false;
+
+        // Draw scaled red background tiles
+        for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
+          for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
+            bgRedCtx.drawImage(backgroundTileRed, x, y, scaledTileWidth, scaledTileHeight);
+          }
+        }
+      }
+
       const canvasSize = 256; 
       const scaledW = canvasSize * scale;
       const scaledH = canvasSize * scale;
@@ -979,8 +1017,8 @@
       const radiusX = 160 * scale; 
       const radiusY = 100 * scale;  
 
+      // Apply gradient to regular background
       bgCtx.save();
-
       bgCtx.translate(imageX + scaledW/2, imageY);
       bgCtx.scale(radiusX / radiusY, 1); 
       bgCtx.translate(-(imageX + scaledW/2), -imageY);
@@ -992,8 +1030,24 @@
 
       bgCtx.fillStyle = gradient;
       bgCtx.fillRect(0, 0, 512, 256); 
-
       bgCtx.restore();
+
+      // Apply gradient to red background if it exists
+      if (backgroundTileRed) {
+        bgRedCtx.save();
+        bgRedCtx.translate(imageX + scaledW/2, imageY);
+        bgRedCtx.scale(radiusX / radiusY, 1); 
+        bgRedCtx.translate(-(imageX + scaledW/2), -imageY);
+
+        const redGradient = bgRedCtx.createRadialGradient(imageX + scaledW/2, imageY, 0, imageX + scaledW/2, imageY, radiusY);
+        redGradient.addColorStop(0, 'rgba(0,0,0,0)'); 
+        redGradient.addColorStop(0.6, 'rgba(0,0,0,0)'); 
+        redGradient.addColorStop(1, 'rgba(0,0,0,1)');   
+
+        bgRedCtx.fillStyle = redGradient;
+        bgRedCtx.fillRect(0, 0, 512, 256); 
+        bgRedCtx.restore();
+      }
     }
 
     function tryStartGhost() {
@@ -1053,28 +1107,31 @@
       if (isFinalStyle && !isCustom) {
         promises.push(
           loadImageFromFile(getRedAssetPath('depth-blue')),
-          loadImageFromFile(getRedAssetPath('depth-text'))
+          loadImageFromFile(getRedAssetPath('depth-text')),
+          loadImageFromFile(getRedAssetPath('depth-darker-new'))
         );
       }
     
       Promise.all(promises)
       .then((results) => {
-        const [tile, textBG, bgTile, redTile, redTextBG] = results;
+        const [tile, textBG, bgTile, redTile, redTextBG, redBgTile] = results;
         
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
 
         // Handle red textures for final style
-        if (isFinalStyle && !isCustom && redTile && redTextBG) {
+        if (isFinalStyle && !isCustom && redTile && redTextBG && redBgTile) {
           placeholderRed = redTile;
+          backgroundTileRed = redBgTile;
           textContainerRed.style.backgroundImage = `url(${redTextBG.toDataURL()})`;
         } else {
           placeholderRed = null;
+          backgroundTileRed = null;
         }
 
         // Show/hide red elements based on final style
-        const redElements = ['#textContainerRed', '#ghostIconRed', '#ghostIcon2Red', '#panelRed'];
+        const redElements = ['#textContainerRed', '#ghostIconRed', '#ghostIcon2Red', '#panelRed', '#backgroundRed'];
         redElements.forEach(selector => {
           const element = document.querySelector(selector);
           if (element) {
