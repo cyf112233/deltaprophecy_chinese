@@ -81,13 +81,13 @@
     }
 
     @keyframes pulseFinalGhost1 {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 0; }
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.4; }
     }
-
+    
     @keyframes pulseFinalGhost2 {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0; }
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.2; }
     }
 
     #output {
@@ -129,11 +129,11 @@
 
     /* Final style ghost animations - opposite to red counterparts */
     body.final-theme #ghostIcon {
-      animation: pulseFinalGhost1 1.5s infinite;
+      animation: pulseFinalGhost1 1.5s infinite 0.75s;
     }
     
     body.final-theme #ghostIcon2 {
-      animation: pulseFinalGhost2 1.5s infinite;
+      animation: pulseFinalGhost2 1.5s infinite 0.75s;
     }
 
     #panel {
@@ -147,7 +147,7 @@
       pointer-events: none;
       top: -50px;
       opacity: 0;
-      animation: pulseFinalRed 1.5s infinite 0.75s;
+      animation: pulseFinalRed 1.5s infinite;
     }
     
     #ghostIcon2Red {
@@ -155,7 +155,7 @@
       pointer-events: none;
       top: -50px;
       opacity: 0;
-      animation: pulseFinalRed 1.5s infinite 0.75s;
+      animation: pulseFinalRed 1.5s infinite;
     }
 
     #panelRed {
@@ -930,7 +930,7 @@
 
       const t = performance.now() / 1000;
       const offset1 = Math.sin(t * 2) * 6;
-      const offset2 = offset1;
+      const offset2 = offset1 * 2;
 
       let scale = parseFloat(imgScale.value);
       const scaledW = resultCanvas.width * scale;
