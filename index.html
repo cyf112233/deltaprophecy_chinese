@@ -10,6 +10,7 @@
       src: url('./assets/fonts/PROPHECYTYPE.ttf') format('truetype');
       font-display: swap;
     }
+    
 
     @font-face {
       font-family: 'DTMSans';
@@ -83,7 +84,7 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 0.4; }
     }
-
+    
     @keyframes pulseFinalGhost2 {
       0%, 100% { opacity: 0; }
       50% { opacity: 0.2; }
@@ -131,10 +132,11 @@
       top: -50px;
     }
 
+    /* Final style ghost animations - opposite to red counterparts */
     body.final-theme #ghostIcon {
       animation: pulseFinalGhost1 2s infinite 1s;
     }
-
+    
     body.final-theme #ghostIcon2 {
       animation: pulseFinalGhost2 2s infinite 1s;
     }
@@ -148,6 +150,7 @@
       top: -50px;
     }
 
+    /* Red overlay canvases */
     #ghostIconRed {
       z-index: 11;
       pointer-events: none;
@@ -155,7 +158,7 @@
       opacity: 0;
       animation: pulseFinalGhost1 2s infinite;
     }
-
+    
     #ghostIcon2Red {
       z-index: 11;
       pointer-events: none;
@@ -367,12 +370,12 @@
       width: 125px;
       max-width: 512px;
     }
-
+    
     select#styleSelect:hover {
       background-color: #222;
       border-color: #fff;
     }
-
+    
     select#styleSelect:focus {
       outline: none;
       border-color: #fff;
@@ -388,14 +391,14 @@
       align-items: center;
       background-color: black;
     }
-
+    
     #advancedSettings {
       display: flex;
       justify-content: center;
       align-items: center;
       margin-top: 10px;
     }
-
+    
     #advancedGrid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -406,14 +409,14 @@
       text-align: center;
       max-width: 400px;
     }
-
+    
     .advancedCell {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
     }
-
+    
     .previewBox {
       width: 96px;
       height: 96px;
@@ -429,7 +432,7 @@
       object-fit: contain;
       overflow: hidden;
     }
-
+    
     .fileLabel {
       font-family: 'DTMSans', sans-serif;
       font-size: 12px;
@@ -451,12 +454,12 @@
       text-align: center;
       margin-top: 4px;
     }
-
+    
     .custom-file-upload.small:hover {
       background-color: #222;
       border-color: #fff;
     }
-
+    
     .custom-file-upload.small:active {
       background-color: #111;
     }
@@ -474,7 +477,7 @@
       grid-column: span 2;
       justify-self: center;
     }
-
+    
     #fontScale {
       -webkit-appearance: none;
       appearance: none;
@@ -485,21 +488,21 @@
       margin: 0;
       align-self: center;
     }
-
+    
     #fontScale::-webkit-slider-runnable-track {
       width: 100%;
       height: 10px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 0px;
     }
-
+    
     #fontScale::-moz-range-track {
       width: 100%;
       height: 10px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 0px;
     }
-
+    
     #fontScale::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 15px;
@@ -510,7 +513,7 @@
       box-shadow: 0 0 2px rgba(0,0,0,0.5);
       cursor: pointer;
     }
-
+    
     #fontScale::-moz-range-thumb {
       width: 15px;
       height: 15px;
@@ -523,7 +526,7 @@
     .sliderWrapper > .fileLabel:first-child {
       margin-bottom: auto;
     }
-
+    
     .sliderWrapper > #fontScaleValue {
       margin-top: auto;
     }
@@ -561,13 +564,13 @@
     </div>
   </div>
 
-  
+  <!-- TESTING -->
   <div style="height: 10px;"></div>
   <button onclick="toggleAdvancedSettings()" class="custom-file-upload">Advanced Settings</button>
-
+  
   <div id="advancedSettings" style="display: none; margin-top: 10px;">
     <div id="advancedGrid">
-      
+      <!-- Font -->
       <div class="advancedCell">
         <div id="fontPreview" class="previewBox" style="font-family: 'ProphecyType';">
           <span id="fontPreviewText">Aa</span>
@@ -578,8 +581,8 @@
           <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
         </label>
       </div>
-
-      
+  
+      <!-- Text Texture -->
       <div class="advancedCell">
         <img id="textPreview" class="previewBox" />
         <div class="fileLabel">Text Texture</div>
@@ -588,8 +591,8 @@
           <input type="file" id="textTextureUpload" accept="image/*" style="display: none;" />
         </label>
       </div>
-
-      
+  
+      <!-- Panel -->
       <div class="advancedCell">
         <img id="panelPreview" class="previewBox" />
         <div class="fileLabel">Panel Texture</div>
@@ -598,8 +601,8 @@
           <input type="file" id="panelImageUpload" accept="image/*" style="display: none;" />
         </label>
       </div>
-
-      
+  
+      <!-- Background -->
       <div class="advancedCell">
         <img id="bgPreview" class="previewBox" />
         <div class="fileLabel">Background Texture</div>
@@ -617,8 +620,8 @@
 
     </div>
   </div>
+  <!-- TESTING -->
   
-
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
     <div id="overlayWrapper">
@@ -642,7 +645,7 @@
 </p>
   </div>
   <footer>
-    <p>© HippoWaterMelon / u/GimkitInfinity 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
+    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> by u/RelevantAd2788 - Determination Sans by Haley Wakamatsu</p>
   </footer>
 
   <script>
@@ -678,6 +681,7 @@
     let backgroundTileRed = null;
     let backgroundScrollOffset = 0;
 
+    // Define all available panels with their preset text and style
     const panelPresets = {
       'roots': {
         text: 'Roots',
@@ -896,13 +900,14 @@
       if (!maskImage || !placeholder) return;
 
       scrollOffset = (scrollOffset + 1) % placeholder.width;
-
+      
       const canvasSize = 256;
-
+      
+      // Draw regular panel
       ctx.clearRect(0, 0, 512, 512);
       ctx.imageSmoothingEnabled = false;
       resultCanvas = createResultCanvas(placeholder, canvasSize);
-
+      
       if (resultCanvas) {
         let scale = parseFloat(imgScale.value);
         const scaledW = resultCanvas.width * scale;
@@ -912,11 +917,12 @@
         ctx.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       }
 
+      // Draw red panel if final style and red texture exists
       if (placeholderRed) {
         ctxRed.clearRect(0, 0, 512, 512);
         ctxRed.imageSmoothingEnabled = false;
         resultCanvasRed = createResultCanvas(placeholderRed, canvasSize);
-
+        
         if (resultCanvasRed) {
           let scale = parseFloat(imgScale.value);
           const scaledW = resultCanvasRed.width * scale;
@@ -941,6 +947,7 @@
       const scaledX = (512 - scaledW) / 2;
       const scaledY = (256 - scaledH) / 2 - parseInt(imgYOffset.value, 10);
 
+      // Draw regular ghost icons
       gtx.clearRect(0, 0, 512, 512);
       gtx.imageSmoothingEnabled = false;
       gtx.setTransform(1, 0, 0, 1, offset1, offset1);
@@ -954,6 +961,7 @@
       gtx2.drawImage(resultCanvas, 0, 0, resultCanvas.width, resultCanvas.height, scaledX, scaledY, scaledW, scaledH);
       gtx2.setTransform(1, 0, 0, 1, 0, 0);
 
+      // Draw red ghost icons if red canvas exists
       if (resultCanvasRed) {
         gtxRed.clearRect(0, 0, 512, 512);
         gtxRed.imageSmoothingEnabled = false;
@@ -981,22 +989,26 @@
 
       const scale = parseFloat(imgScale.value);
       const yOffset = -parseInt(imgYOffset.value, 10);
-
+      
+      // Scale the background tile size
       const scaledTileWidth = backgroundTile.width * scale;
       const scaledTileHeight = backgroundTile.height * scale;
-
+      
       const offset = (backgroundScrollOffset * scale) % scaledTileWidth;
 
+      // Draw scaled background tiles
       for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
         for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
           bgCtx.drawImage(backgroundTile, x, y, scaledTileWidth, scaledTileHeight);
         }
       }
 
+      // Draw red background if it exists
       if (backgroundTileRed) {
         bgRedCtx.clearRect(0, 0, 512, 256);
         bgRedCtx.imageSmoothingEnabled = false;
 
+        // Draw scaled red background tiles
         for (let y = -offset + yOffset; y < 256 + scaledTileHeight + yOffset; y += scaledTileHeight) {
           for (let x = -offset; x < 512 + scaledTileWidth; x += scaledTileWidth) {
             bgRedCtx.drawImage(backgroundTileRed, x, y, scaledTileWidth, scaledTileHeight);
@@ -1010,9 +1022,11 @@
       const imageX = (512 - scaledW) / 2; 
       const imageY = 64 + yOffset; 
 
+      // Scale the gradient radii based on the scale factor
       const radiusX = 160 * scale; 
       const radiusY = 100 * scale;  
 
+      // Apply gradient to regular background
       bgCtx.save();
       bgCtx.translate(imageX + scaledW/2, imageY);
       bgCtx.scale(radiusX / radiusY, 1); 
@@ -1027,6 +1041,7 @@
       bgCtx.fillRect(0, 0, 512, 256); 
       bgCtx.restore();
 
+      // Apply gradient to red background if it exists
       if (backgroundTileRed) {
         bgRedCtx.save();
         bgRedCtx.translate(imageX + scaledW/2, imageY);
@@ -1082,20 +1097,22 @@
       return `./assets/depth/${name}-final-red.png`;
     }
 
+    // Global flags for custom assets
     let customTextTexture = null;
     let customBackgroundTile = null;
     let customPanelTexture = null;
-
+    
     function reloadAssetsAndRedraw() {
       const isFinalStyle = styleSelect.value === 'final';
       const isCustom = customTextTexture || customBackgroundTile || customPanelTexture;
-
+    
       const promises = [
         customPanelTexture ? Promise.resolve(customPanelTexture) : loadImageFromFile(getAssetPath('depth-blue')),
         customTextTexture ? Promise.resolve(customTextTexture) : loadImageFromFile(getAssetPath('depth-text')),
         customBackgroundTile ? Promise.resolve(customBackgroundTile) : loadImageFromFile(getAssetPath('depth-darker-new'))
       ];
 
+      // Load red textures if final style and not using custom assets
       if (isFinalStyle && !isCustom) {
         promises.push(
           loadImageFromFile(getRedAssetPath('depth-blue')),
@@ -1103,15 +1120,16 @@
           loadImageFromFile(getRedAssetPath('depth-darker-new'))
         );
       }
-
+    
       Promise.all(promises)
       .then((results) => {
         const [tile, textBG, bgTile, redTile, redTextBG, redBgTile] = results;
-
+        
         placeholder = tile;
         backgroundTile = bgTile;
         textContainer.style.backgroundImage = `url(${textBG.toDataURL()})`;
 
+        // Handle red textures for final style
         if (isFinalStyle && !isCustom && redTile && redTextBG && redBgTile) {
           placeholderRed = redTile;
           backgroundTileRed = redBgTile;
@@ -1121,6 +1139,7 @@
           backgroundTileRed = null;
         }
 
+        // Show/hide red elements based on final style
         const redElements = ['#textContainerRed', '#ghostIconRed', '#ghostIcon2Red', '#panelRed', '#backgroundRed'];
         redElements.forEach(selector => {
           const element = document.querySelector(selector);
@@ -1128,10 +1147,10 @@
             element.style.display = (isFinalStyle && !isCustom) ? 'block' : 'none';
           }
         });
-
+    
         if (maskImage) drawPanel();
         drawBackground();
-
+    
         if (!isCustom) {
           document.body.classList.toggle('susie-theme', styleSelect.value === 'susie');
           document.body.classList.toggle('final-theme', styleSelect.value === 'final');
@@ -1165,41 +1184,45 @@
     });
 
     window.addEventListener('load', () => {
-
+      // Get random panel
       const randomPanelName = getRandomPanel();
       const randomPanel = panelPresets[randomPanelName];
-
+      
       console.log(`Loading random panel: ${randomPanelName}`);
-
+      
+      // Set the style first
       styleSelect.value = randomPanel.style;
       document.body.classList.toggle('susie-theme', randomPanel.style === 'susie');
       document.body.classList.toggle('final-theme', randomPanel.style === 'final');
-
+      
+      // Set the text
       textInput.value = randomPanel.text;
       const formattedText = randomPanel.text.replace(/\\n/g, '<br>');
       textContainer.innerHTML = formattedText;
       textContainerRed.innerHTML = formattedText;
-
+      
+      // Load the corresponding image
       const defaultImg = new Image();
       defaultImg.onload = () => {
         maskImage = defaultImg;
-
+        // Reload assets with the correct style, then draw
         reloadAssetsAndRedraw();
         drawPanel();
         tryStartGhost();
       };
       defaultImg.onerror = () => {
         console.error(`Failed to load image: ./assets/base-panels/${randomPanelName}.png`);
-
+        // Fallback to heroes-1 if the random image fails
         defaultImg.src = './assets/base-panels/heroes-1.png';
       };
       defaultImg.src = `./assets/base-panels/${randomPanelName}.png`;
 
+      // Set the Y offset if specified
       if (randomPanel.yOffset !== undefined) {
         imgYOffset.value = randomPanel.yOffset;
         document.getElementById('imgYOffsetValue').textContent = randomPanel.yOffset + 'px';
       } else {
-
+        // Reset to default if no custom offset
         imgYOffset.value = 0;
         document.getElementById('imgYOffsetValue').textContent = '0px';
       }
@@ -1218,32 +1241,35 @@
       }
       requestAnimationFrame(animateSineWrapper);
     }
-
+    
     requestAnimationFrame(animateSineWrapper);
-
+    
     styleSelect.addEventListener('change', reloadAssetsAndRedraw);
 
+    // Advanced Settings Functions
+    
     function toggleAdvancedSettings() {
       const div = document.getElementById("advancedSettings");
       div.style.display = div.style.display === "none" ? "block" : "none";
     }
-
+    
     document.getElementById("fontUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function () {
-          const fontName = file.name.replace(/\.[^/.]+$/, ""); 
+          const fontName = file.name.replace(/\.[^/.]+$/, ""); // strip extension
           const customFont = new FontFace(fontName, `url(${reader.result})`);
           customFont.load().then((loadedFont) => {
             document.fonts.add(loadedFont);
-
+    
+            // Update preview and label
             const preview = document.getElementById("fontPreview");
             const label = document.getElementById("fontLabel");
             const previewText = document.getElementById("fontPreviewText");
             const textContainer = document.getElementById("textContainer");
             const textContainerRed = document.getElementById("textContainerRed");
-
+            
             previewText.style.fontFamily = `"${fontName}", serif`;
             label.textContent = fontName;
             label.style.fontFamily = `"${fontName}", serif`;
@@ -1254,7 +1280,7 @@
         reader.readAsDataURL(file);
       }
     });
-
+    
     document.getElementById("textTextureUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1272,7 +1298,7 @@
         img.src = URL.createObjectURL(file);
       }
     });
-
+    
     document.getElementById("panelImageUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1288,7 +1314,7 @@
         img.src = URL.createObjectURL(file);
       }
     });
-
+    
     document.getElementById("bgImageUpload").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1309,7 +1335,7 @@
 
     const fontScale = document.getElementById("fontScale");
     const fontScaleValue = document.getElementById("fontScaleValue");
-
+    
     fontScale.addEventListener("input", () => {
       const scale = parseFloat(fontScale.value).toFixed(2);
       fontScaleValue.textContent = `${scale}×`;
@@ -1320,5 +1346,26 @@
     });
 
   </script>
+
+  <script>
+    fetch('./assets/scripts/license.key')
+      .then(res => {
+        if (!res.ok) throw new Error('File not found');
+        return res.text();
+      })
+      .then(base64 => {
+        const decoded = atob(base64.trim());
+        const expected = 'hey there, shitlips! dont you dare even think to try and steal my fucking code!';
+  
+        if (decoded !== expected) {
+          console.warn('File contents do not match. Redirecting...');
+          window.location.href = 'https://example.com'; // your redirect URL
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch or decode file:', err);
+        window.location.href = 'https://example.com'; // redirect on error or missing file
+      });
+</script>
 </body>
-</html>
+</html> 
