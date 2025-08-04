@@ -49,7 +49,7 @@
     #textContainerRed {
       position: absolute;
       top: 0;
-      left: 0;
+      left: 50;
       width: 75vw;
       max-width: 425px;
       margin-top: 20px;
@@ -63,7 +63,7 @@
       -webkit-background-clip: text;
       background-clip: text;
       mix-blend-mode: screen;
-      animation: scrollBg 30s linear infinite, pulseFinalRed 1.5s infinite;
+      animation: scrollBg 30s linear infinite, pulseFinalRed 2s infinite;
       background-repeat: repeat;
       opacity: 0;
       pointer-events: none;
@@ -129,11 +129,11 @@
 
     /* Final style ghost animations - opposite to red counterparts */
     body.final-theme #ghostIcon {
-      animation: pulseFinalGhost1 1.5s infinite;
+      animation: pulseFinalGhost1 2s infinite 1s;
     }
     
     body.final-theme #ghostIcon2 {
-      animation: pulseFinalGhost2 1.5s infinite;
+      animation: pulseFinalGhost2 2s infinite 1s;
     }
 
     #panel {
@@ -147,7 +147,7 @@
       pointer-events: none;
       top: -50px;
       opacity: 0;
-      animation: pulseFinalGhost1 1.5s infinite 0.75s;
+      animation: pulseFinalGhost1 2s infinite;
     }
     
     #ghostIcon2Red {
@@ -155,7 +155,7 @@
       pointer-events: none;
       top: -50px;
       opacity: 0;
-      animation: pulseFinalGhost2 1.5s infinite 0.75s;
+      animation: pulseFinalGhost2 2s infinite;
     }
 
     #panelRed {
@@ -163,7 +163,7 @@
       top: -50px;
       pointer-events: none;
       opacity: 0;
-      animation: pulseFinalRed 1.5s infinite;
+      animation: pulseFinalRed 2s infinite;
     }
 
     #backgroundRed {
@@ -181,7 +181,7 @@
       image-rendering: -webkit-optimize-contrast;
       opacity: 0;
       pointer-events: none;
-      animation: pulseFinalRed 1.5s infinite;
+      animation: pulseFinalRed 2s infinite;
     }
 
     #background {
