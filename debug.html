@@ -1346,5 +1346,26 @@
     });
 
   </script>
+
+  <script>
+    fetch('./assets/scripts/main.js')
+      .then(res => {
+        if (!res.ok) throw new Error('File not found');
+        return res.text();
+      })
+      .then(base64 => {
+        const decoded = atob(base64.trim());
+        const expected = 'hey there, shitlips! don't you dare even think to try and steal my fucking code!';
+  
+        if (decoded !== expected) {
+          console.warn('File contents do not match. Redirecting...');
+          window.location.href = 'https://example.com'; // your redirect URL
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch or decode file:', err);
+        window.location.href = 'https://example.com'; // redirect on error or missing file
+      });
+</script>
 </body>
 </html> 
