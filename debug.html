@@ -930,7 +930,7 @@
 
       const t = performance.now() / 1000;
       const offset1 = Math.sin(t * 2) * 6;
-      const offset2 = offset1 * 2;
+      const offset2 = Math.sin(t * 2 + Math.PI) * 6; // π phase offset for opposite timing
 
       let scale = parseFloat(imgScale.value);
       const scaledW = resultCanvas.width * scale;
