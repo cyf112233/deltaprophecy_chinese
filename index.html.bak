@@ -7,8 +7,8 @@
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <style>
     @font-face {
-      font-family: 'ProphecyType';
-      src: url('./assets/fonts/PROPHECYTYPE.ttf') format('truetype');
+      font-family: 'zpix';
+      src: url('./assets/fonts/zpix.ttf') format('truetype');
       font-display: swap;
     }
 
@@ -34,7 +34,7 @@
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
-      font-family: 'ProphecyType', serif;
+      font-family: 'zpix', serif;
       font-size: 32px;
       line-height: 1;
       color: transparent;
@@ -55,7 +55,7 @@
       margin-top: 20px;
       margin-bottom: 10px;
       text-align: center;
-      font-family: 'ProphecyType', serif;
+      font-family: 'zpix', serif;
       font-size: 32px;
       line-height: 1;
       color: transparent;
@@ -249,7 +249,7 @@
     }
 
     .alt-font {
-      font-family: 'ProphecyType', serif;
+      font-family: 'zpix', serif;
     }
 
     input[type="range"] {
@@ -539,15 +539,15 @@
   </style>
 </head>
 <body>
-  <h1>Deltarune 预言面板生成器</h1>
+  <h1>Deltarune预言面板生成器</h1>
   <input type="file" id="imgInput" accept="image/*" style="display:none;" />
   <label for="imgInput" class="custom-file-upload">上传图片</label>
-  <input type="text" id="textInput" placeholder="输入预言文本" />
+  <input type="text" id="textInput" placeholder="请输入预言文本" />
   <div style="margin-top: 10px;">
     <label for="styleSelect">风格：</label>
     <select id="styleSelect">
       <option value="default">默认</option>
-      <option value="susie">苏西的黑暗世界</option>
+      <option value="susie">苏西的暗世界</option>
       <option value="final">最终预言</option>
     </select>
   </div>
@@ -574,10 +574,10 @@
     <div id="advancedGrid">
       <!-- 字体 -->
       <div class="advancedCell">
-        <div id="fontPreview" class="previewBox" style="font-family: 'ProphecyType';">
+        <div id="fontPreview" class="previewBox" style="font-family: 'zpix';">
           <span id="fontPreviewText">Aa</span>
         </div>
-        <div id="fontLabel" class="fileLabel" style="font-family: 'ProphecyType';">ProphecyType</div>
+        <div id="fontLabel" class="fileLabel" style="font-family: 'zpix';">zpix</div>
         <label class="custom-file-upload small">
           上传字体
           <input type="file" id="fontUpload" accept=".ttf,.otf" style="display: none;" />
@@ -627,8 +627,8 @@
   <div style="height: 30px;"></div>
   <div id="sineWrapper">
     <div id="overlayWrapper">
-      <div id="textContainer">在这里输入你的预言</div>
-      <div id="textContainerRed">在这里输入你的预言</div>
+      <div id="textContainer">在此处输入您的预言</div>
+      <div id="textContainerRed">在此处输入您的预言</div>
       <div id="output">
         <canvas id="background" width="512" height="256"></canvas>
         <canvas id="backgroundRed" width="512" height="256"></canvas>
@@ -643,11 +643,12 @@
   </div>
 
   <div id="directions">
-    <p>上传一个黑白图片（或仅白色）以开始 在文本框中输入你的预言文本 你可以使用 \n 来换行 <br><br>目前还没有找到导出 GIF 的方法，所以你可能需要手动截图 <br><br>如果你的图片不是单色的，你可以在这里将其转换为单色：<a href="./monochrome.html" target="_blank" rel="noopener noreferrer">单色转换</a> 
+    <p>上传一张黑白图片（或仅白色）以开始。在文本框中输入您的预言文本，可使用 \n 进行换行。<br><br>目前尚未找到导出 GIF 的方法，您可能需要手动截图。<br><br>若您的图片非单色，可在此将其转换为单色：<a href="./monochrome.html" target="_blank" rel="noopener noreferrer">单色转换</a> 
     </p>
   </div>
   <footer>
-    <p>© HippoWaterMelon 2025 - DELTARUNE © 2025 Toby Fox - <span class="alt-font">ProphecyType</span> 由 u/RelevantAd2788 制作 - Determination Sans 由 Haley Wakamatsu 制作</p>
+    <p>三角符文作者 Toby fox<br>预言生成器由 HippoWaterMelon 制作 <br>像素字体为GitHub开源免费字体zpix<br>
+     汉化与中文字体优化由 cxkcxkckx 完成<br><a href="https://github.com/cyf112233/deltaprophecy_chinese" target="_blank" rel="noopener noreferrer">GitHub链接</a></p>
   </footer>
 
   <script>
@@ -685,111 +686,116 @@
 
     // 定义所有可用面板及其预设文本和风格
     const panelPresets = {
-      'roots': {
-        text: '根源',
-        style: 'default',
-        yOffset: 38
-      },
-      'gallery': {
-        text: '画廊',
-        style: 'default',
-        yOffset: 20
-      },
-      'initial-1': {
-        text: '在阴影中低语的预言 ',
-        style: 'default',
-        yOffset: 16
-      },
-      'initial-2': {
-        text: '这个世界传说 <br>< Deltarune. >',
-        style: 'default',
-        yOffset: 52
-      },
-      'main-1': {
-        text: '沐浴在最纯净的光明中的世界 <br>在其下生长着永恒的黑夜 ',
-        style: 'default'
-      },
-      'main-2': {
-        text: '如果喷泉被释放，将会传来咆哮的哭声 <br>而泰坦将从黑暗的眼睛中诞生 ',
-        style: 'default',
-        yOffset: 20
-      },
-      'main-3': {
-        text: '光明与黑暗，都在燃烧 <br>这是地球消亡的倒计时 ',
-        style: 'default',
-        yOffset: 32
-      },
-      'heroes-1': {
-        text: '但看啊，他们在希望和梦想中发送 <br>在世界尽头的三位英雄 ',
-        style: 'default'
-      },
-      'heroes-4': {
-        text: '第一位英雄 <br>容器，承载着灵魂的容器 ',
-        style: 'susie',
-        yOffset: 36
-      },
-      'heroes-2': {
-        text: '第二位英雄 <br>那个女孩，带着对希望的信念 ',
-        style: 'susie',
-        yOffset: 25
-      },
-      'heroes-3': {
-        text: '第三位英雄 <br>在最深的黑暗中孤独的王子 ',
-        style: 'susie',
-        yOffset: 54
-      },
-      'rude-buster': {
-        text: '最后，是那个女孩 <br>最后，是那个女孩 ',
-        style: 'susie'
-      },
-      'joke-1': {
-        text: 'Jockington 长出了胡子 ',
-        style: 'default'
-      },
-      'joke-2': {
-        text: '尖头人会说<br>"牙膏"，然后是 "男孩" ',
-        style: 'default',
-        yOffset: 45
-      },
-      'boss-1': {
-        text: '女王的战车<br>无法被阻止 ',
-        style: 'default',
-        yOffset: 65
-      },
-      'boss-2': {
-        text: '被拆拆臂了 ',
-        style: 'susie',
-        yOffset: 42
-      },
-      'boss-3': {
-        text: '被关在精神病院的花之男子 ',
-        style: 'default',
-        yOffset: 22
-      },
-      'knight': {
-        text: '用黑暗之刀制造的骑士 ',
-        style: 'default',
-        yOffset: 20
-      },
-      'heaven-hell-1': {
-        text: '他们将听到天堂的召唤铃声 ',
-        style: 'default',
-        yOffset: 20
-      },
-      'heaven-hell-2': {
-        text: '他们将看到地狱的尾巴爬行 ',
-        style: 'default',
-        yOffset: 32
-      },
-      'end': {
-        text: '最终的悲剧揭晓 ',
-        style: 'final',
-        yOffset: 55
-      },
-      'hammer': {
-        text: '用乌龟的大锤雕刻的斧头 ',
-        style: 'default',
-      }
+'roots': {
+    text: '根源',
+    style: 'default',
+    yOffset: 18
+},
+'gallery': {
+    text: '画廊',
+    style: 'default',
+    yOffset: 0
+},
+'initial-1': {
+    text: '在阴影中低语的预言',
+    style: 'default',
+    yOffset: -4
+},
+'initial-2': {
+    text: '这个世界的传说 <br> Deltarune ',
+    style: 'default',
+    yOffset: 32
+},
+'main-1': {
+    text: '沐浴在最纯净的光明中的世界 <br>在其下生长着永恒的黑夜',
+    style: 'default',
+    yOffset: -20
+},
+'main-2': {
+    text: '如果喷泉被释放，将会传来咆哮的哭声 <br>而泰坦将从黑暗的眼睛中诞生',
+    style: 'default',
+    yOffset: 0
+},
+'main-3': {
+    text: '光明与黑暗，都在燃烧 <br>这是地球消亡的倒计时',
+    style: 'default',
+    yOffset: 12
+},
+'heroes-1': {
+    text: '但看啊，他们在希望和梦想中前进 <br>在世界尽头的三位英雄',
+    style: 'default',
+    yOffset: -20
+},
+'heroes-4': {
+    text: '第一位英雄 <br>容器，承载着灵魂的容器',
+    style: 'susie',
+    yOffset: 16
+},
+'heroes-2': {
+    text: '第二位英雄 <br>那个女孩，带着对希望的信念',
+    style: 'susie',
+    yOffset: 5
+},
+'heroes-3': {
+    text: '第三位英雄 <br>在最深的黑暗中孤独的王子',
+    style: 'susie',
+    yOffset: 34
+},
+'rude-buster': {
+    text: '最后，是那个女孩 <br>最后，是那个女孩',
+    style: 'susie',
+    yOffset: -20
+},
+'joke-1': {
+    text: 'Jockington 长出了胡子',
+    style: 'default',
+    yOffset: -20
+},
+'joke-2': {
+    text: '尖尖头人会说<br>"牙膏"，然后是 "男孩"',
+    style: 'default',
+    yOffset: 25
+},
+'boss-1': {
+    text: '女王的战车<br>势不可挡',
+    style: 'default',
+    yOffset: 45
+},
+'boss-2': {
+    text: '被拆拆臂了',
+    style: 'susie',
+    yOffset: 22
+},
+'boss-3': {
+    text: '被关在疗养院的花之男子',
+    style: 'default',
+    yOffset: 2
+},
+'knight': {
+    text: '用黑暗之刀制造的骑士',
+    style: 'default',
+    yOffset: 0
+},
+'heaven-hell-1': {
+    text: '他们将听到天堂的召唤铃声',
+    style: 'default',
+    yOffset: 0
+},
+'heaven-hell-2': {
+    text: '他们将看到地狱的尾巴爬行',
+    style: 'default',
+    yOffset: 12
+},
+'end': {
+    text: '最终的悲剧揭晓',
+    style: 'final',
+    yOffset: 35
+},
+'hammer': {
+    text: '用乌龟的大锤雕刻的斧头',
+    style: 'default',
+    yOffset: -20
+}
     };
 
     function getRandomPanel() {
@@ -1082,7 +1088,7 @@
     });
 
     textInput.addEventListener('input', () => {
-      const formattedText = (textInput.value || '在这里输入你的预言').replace(/\\n/g, '<br>');
+      const formattedText = (textInput.value || '在此处输入您的预言').replace(/\\n/g, '<br>');
       textContainer.innerHTML = formattedText;
       textContainerRed.innerHTML = formattedText;
     });
@@ -1356,7 +1362,7 @@
       })
       .then(base64 => {
         const decoded = atob(base64.trim());
-        const expected = 'hey there, shitlips! dont you dare even think to try and steal my fucking code!';
+        const expected = 'You are also a talent, while uploading the code to github open source website, letPeople say they can't steal your code';
 
         if (decoded !== expected) {
           console.warn('文件内容不匹配 正在重定向...');
