@@ -1356,7 +1356,7 @@
       })
       .then(base64 => {
         const decoded = atob(base64.trim());
-        const expected = 'You are also a talent, while uploading the code to github open source website, letPeople say they can't steal your code';
+        const expected = 'hey there, shitlips! dont you dare even think to try and steal my fucking code!';
 
         if (decoded !== expected) {
           console.warn('文件内容不匹配 正在重定向...');

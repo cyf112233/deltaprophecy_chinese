@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Monochrome Tool</title>
+  <title>单色工具</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <style>
     @font-face {
@@ -169,31 +169,31 @@
   </style>
 </head>
 <body>
-  <h1>Monochrome Image Tool</h1>
+  <h1>单色图像工具</h1>
 
   <input type="file" id="fileInput" accept="image/*" />
-  <label for="fileInput" class="custom-file-upload">Upload Image</label>
+  <label for="fileInput" class="custom-file-upload">上传图片</label>
 
   <canvas id="preview"></canvas>
 
   <div id="thresholdContainer">
-    <label for="threshold">Threshold:</label>
+    <label for="threshold">阈值：</label>
     <input type="range" id="threshold" min="0" max="255" value="127" />
     <span id="thresholdValue">127</span>
   </div>
 
   <div id="invertContainer">
-    <label for="invertToggle">Invert Colors:</label>
+    <label for="invertToggle">反转颜色：</label>
     <label class="switch">
       <input type="checkbox" id="invertToggle" />
       <span class="slider"></span>
     </label>
   </div>
 
-  <button id="exportButton">Export PNG</button>
+  <button id="exportButton">导出为PNG</button>
 
   <div id="info">
-    <p>Adjust the threshold slider to change how dark/light the monochrome image is.<br>Toggle invert colors on or off.<br>Then export the result as a PNG.</p>
+    <p>调整阈值滑块以改变单色图像的明暗程度。<br>切换反转颜色开关以反转图像颜色。<br>然后将结果导出为PNG格式。</p>
   </div>
     
   <footer>
